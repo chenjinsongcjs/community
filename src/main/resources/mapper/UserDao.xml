@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nowcoder.community.dao.UserDao">
+    <sql id="userInsert">
+        username,password,salt,email,`type`,status,activation_code,header_url,create_time
+    </sql>
+    <insert id="saveUser" useGeneratedKeys="true" keyProperty="id">
+        insert into `user` (<include refid="userInsert"></include>) values
+        (
+        #{user.username},
+        #{user.password},
+        #{user.salt},
+        #{user.email},
+        #{user.type},
+        #{user.status},
+        #{user.activationCode},
+        #{user.headerUrl},
+        #{user.createTime}
+        )
+
+    </insert>
+    <update id="updateUser">
+        update `user`
+            <set>
+        <if test="user.username != null">
+            username = #{user.username},
+        </if>
+        <if test="user.password != null">
+            password = #{user.password},
+        </if>
+        <if test="user.salt != null">
+            salt = #{user.salt},
+        </if>
+        <if test="user.email != null">
+            email = #{user.email},
+        </if>
+        <if test="user.type != null">
+            `type` = #{user.type},
+        </if>
+        <if test="user.status != null">
+            status = #{user.status},
+        </if>
+        <if test="user.activationCode != null">
+            activation_code = #{user.activationCode},
+        </if>
+        <if test="user.headerUrl != null">
+            head_url = #{user.headerUrl}
+        </if></set>
+        <where>
+            id = #{user.id}
+        </where>
+
+
+    </update>
+    <sql id="userCol">
+        id,username,password,salt,email,`type`,status,activation_code,header_url,create_time
+    </sql>
+    <delete id="deleteUserById">
+        delete from `user` where id = #{id}
+    </delete>
+
+    <select id="getUserByName" resultType="com.nowcoder.community.domain.User">
+        select <include refid="userCol"></include> from `user` where username = #{name}
+    </select>
+    <select id="getUserById" resultType="com.nowcoder.community.domain.User">
+        select  <include refid="userCol"></include> from `user` where id = #{id}
+    </select>
+</mapper>

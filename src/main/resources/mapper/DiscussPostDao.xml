@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nowcoder.community.dao.DiscussPostDao">
+
+    <select id="getAllDiscussPosts" resultType="com.nowcoder.community.domain.DiscussPost">
+        select * from `discuss_post`
+        where status != 2
+        order by `type` desc ,status desc , create_time desc
+    </select>
+    <select id="getDiscussPostCount" resultType="java.lang.Integer">
+        select count(*) from `discuss_post`
+    </select>
+</mapper>
