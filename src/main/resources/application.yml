@@ -11,6 +11,12 @@ spring:
     port: 6379
   thymeleaf:
     cache: false # 关闭缓存，方便测试
+  mail: # Spring Mail的相关配置
+    password: slemhreoetvlffab
+    username: 1320959760@qq.com
+    host: smtp.qq.com # 发件服务器
+    port: 465
+    protocol: smtps
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
   configuration:
