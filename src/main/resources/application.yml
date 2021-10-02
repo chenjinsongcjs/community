@@ -21,3 +21,6 @@ mybatis:
   mapper-locations: classpath:/mapper/*.xml
   configuration:
     map-underscore-to-camel-case: true
+community:
+  path:
+    domain: http://localhost:8888

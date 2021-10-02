@@ -51,7 +51,7 @@ public class MailUtil {
             //发送的主体内容,第二个参数不能忘记不然不能发送html
             helper.setText(comment,true);
             javaMailSender.send(mimeMessage);
-
+            log.info("邮件发送成功！");
         } catch (MessagingException e) {
          log.error("邮件发送失败"+e.getMessage());
         }

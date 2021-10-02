@@ -45,7 +45,7 @@
             activation_code = #{user.activationCode},
         </if>
         <if test="user.headerUrl != null">
-            head_url = #{user.headerUrl}
+            header_url = #{user.headerUrl}
         </if></set>
         <where>
             id = #{user.id}
@@ -65,5 +65,8 @@
     </select>
     <select id="getUserById" resultType="com.nowcoder.community.domain.User">
         select  <include refid="userCol"></include> from `user` where id = #{id}
+    </select>
+    <select id="getUserByEmail" resultType="com.nowcoder.community.domain.User">
+        select <include refid="userCol"></include> from `user` where email = #{email}
     </select>
 </mapper>

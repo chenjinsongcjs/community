@@ -23,4 +23,6 @@ public interface UserDao {
     int deleteUserById(@Param("id") Integer id);
     //修改用户信息
     int updateUser(@Param("user") User user);
+    //查询邮箱
+    User getUserByEmail(@Param("email") String email);
 }
