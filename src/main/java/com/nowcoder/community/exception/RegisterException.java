@@ -16,7 +16,7 @@ import java.util.Map;
  * @Date: 2021/10/03/0:24
  * @Description: 统一异常处理,指定处理异常的范围
  */
-@RestControllerAdvice(basePackages = "com.nowcoder.community.controller")
+//@RestControllerAdvice(basePackages = "com.nowcoder.community.controller")
 public class RegisterException {
     /**
     * @Description: 校验异常
