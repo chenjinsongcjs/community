@@ -189,7 +189,9 @@
 	<script th:src="@{/js/global.js}"></script>
 	<script type="application/javascript">
 		function refreshCode() {
-			$("#kaptchaCode").attr("src","/kaptcha.jpg?t="+new Date().getTime());
+			var path = CONTEXT_PATH +"/kaptcha.jpg?t="+new Date().getTime();
+			// alert(path);
+			$("#kaptchaCode").attr("src",path);
 		}
 	</script>
 </body>

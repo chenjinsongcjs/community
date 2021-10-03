@@ -26,3 +26,4 @@ mybatis:
 community:
   path:
     domain: http://localhost:8888
+    uploadPath: D:/log/upload/

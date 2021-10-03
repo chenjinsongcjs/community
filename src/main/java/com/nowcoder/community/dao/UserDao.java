@@ -25,4 +25,6 @@ public interface UserDao {
     int updateUser(@Param("user") User user);
     //查询邮箱
     User getUserByEmail(@Param("email") String email);
+    //修改用户头像
+    int updateUserHeaderImage(@Param("userId") int userId, @Param("imagePath") String imagePath);
 }

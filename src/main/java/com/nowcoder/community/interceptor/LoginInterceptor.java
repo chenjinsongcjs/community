@@ -33,7 +33,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     private UserDao userDao;
 
     //用ThreadLocal存储用户信息，使得线程之间隔离,在任何地方任何时候都能获取
-    public  ThreadLocal<User> users = new ThreadLocal<>();
+    public static ThreadLocal<User> users = new ThreadLocal<>();
 
     //在目标方法之前执行
     @Override
