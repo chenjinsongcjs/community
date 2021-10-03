@@ -4,11 +4,13 @@ import com.google.code.kaptcha.Producer;
 import com.nowcoder.community.constant.LoginTicketExpiredTime;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.service.LoginService;
+import com.nowcoder.community.service.LogoutService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -35,7 +37,8 @@ public class LoginController {
     private Producer producer;
     @Autowired
     private LoginService loginService;
-
+    @Autowired
+    private LogoutService logoutService;
     /**
     * @Description: 获取验证码
     * @Param: []
@@ -93,5 +96,10 @@ public class LoginController {
         model.addAttribute("passwordMsg",map.get("passwordMsg"));
         model.addAttribute("user",user);
         return "/site/login";
+    }
+    @GetMapping("/logout")
+    public String logout(@CookieValue("ticket") String ticket){
+        logoutService.logout(ticket);
+        return "redirect:/toLogin";
     }
 }
