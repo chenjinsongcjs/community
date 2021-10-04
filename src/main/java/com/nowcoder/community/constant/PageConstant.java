@@ -12,4 +12,6 @@ public class PageConstant {
     public static final int NAVIGATE_PAGES = 5;
     //每一页的大小
     public static final int PAGE_SIZE = 10;
+    //评论的分页大小
+    public static final int COMMENT_PAGE_SIZE = 5;
 }

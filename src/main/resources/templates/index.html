@@ -133,26 +133,26 @@
 								<ul class="d-inline float-right">
 									<li class="d-inline ml-2">赞 11</li>
 									<li class="d-inline ml-2">|</li>
-									<li class="d-inline ml-2">回帖 7</li>
+									<li class="d-inline ml-2">回帖 <i th:text="${record.discussPost.commentCount}"></i>></li>
 								</ul>
 							</div>
 						</div>
 					</li>
 				</ul>
 				<!-- 分页 -->
-				<nav class="mt-5">
+				<nav class="mt-5" th:fragment="pagination">
 					<ul class="pagination justify-content-center" th:if="${page != null}" >
-						<li class="page-item"><a class="page-link" th:href="@{'/index'(pageNum=1)}">首页</a></li>
+						<li class="page-item"><a class="page-link" th:href="@{${requestPath}(pageNum=1)}">首页</a></li>
 						<li th:class="|page-item  ${page.pageInfo.hasPreviousPage ? '' : 'disabled'} |">
-							<a class="page-link" th:href="@{'/index'(pageNum=${page.pageInfo.prePage})}">上一页</a>
+							<a class="page-link" th:href="@{${requestPath}(pageNum=${page.pageInfo.prePage})}">上一页</a>
 						</li>
 						<li th:class="|page-item ${page.pageInfo.pageNum == num ? 'active' : ''} |" th:each="num:${page.pageInfo.navigatepageNums}">
-							<a class="page-link" th:href="@{'/index'(pageNum=${num})}" th:text="${num}">1</a>
+							<a class="page-link" th:href="@{${requestPath}(pageNum=${num})}" th:text="${num}">1</a>
 						</li>
 						<li th:class="|page-item  ${page.pageInfo.hasNextPage ? '' : 'disabled'} |">
-							<a class="page-link" th:href="@{'/index'(pageNum=${page.pageInfo.nextPage})}">下一页</a>
+							<a class="page-link" th:href="@{${requestPath}(pageNum=${page.pageInfo.nextPage})}">下一页</a>
 						</li>
-						<li class="page-item"><a class="page-link" th:href="@{'/index'(pageNum=${page.pageInfo.pages})}">末页</a></li>
+						<li class="page-item"><a class="page-link" th:href="@{${requestPath}(pageNum=${page.pageInfo.pages})}">末页</a></li>
 					</ul>
 				</nav>
 			</div>
