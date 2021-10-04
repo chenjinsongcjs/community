@@ -2,6 +2,7 @@ package com.nowcoder.community.dao;
 
 import com.nowcoder.community.domain.DiscussPost;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,4 +19,9 @@ public interface DiscussPostDao {
     List<DiscussPost> getAllDiscussPosts();
     //查询帖子的数量
     int getDiscussPostCount();
+    //插入帖子
+    int saveDiscussPost(DiscussPost discussPost);
+
+    //根据id查询帖子用于显示帖子的详细信息
+    DiscussPost getDiscussPostById(@Param("id") int id);
 }

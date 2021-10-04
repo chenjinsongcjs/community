@@ -22,7 +22,7 @@ public class DiscussPost {
     private Integer id;
     private Integer userId;
     private String title;
-    private String context;
+    private String content;
     private Integer type;//0 普通 1 置顶
     private Integer status;//0 正常 1 精华
     private Date createTime;

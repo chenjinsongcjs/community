@@ -55,7 +55,8 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         //将用户信息放在模板中，方便读取
-        modelAndView.addObject("loginUser",users.get());
+        if(!modelAndView.isEmpty())
+            modelAndView.addObject("loginUser",users.get());
     }
     //在模板结束之后执行或者发生异常执行
     @Override

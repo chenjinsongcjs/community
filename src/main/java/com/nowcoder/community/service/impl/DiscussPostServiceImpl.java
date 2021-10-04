@@ -9,11 +9,17 @@ import com.nowcoder.community.dao.UserDao;
 import com.nowcoder.community.domain.DiscussPost;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.service.DiscussPostService;
+import com.nowcoder.community.utils.JSONUtils;
+import com.nowcoder.community.utils.SensitiveWordsFilter;
 import com.nowcoder.community.vo.DiscussPostAndUser;
 import com.nowcoder.community.vo.MyPage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.HtmlUtils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,9 +31,12 @@ import java.util.stream.Collectors;
  * @Description:
  */
 @Service
+@Slf4j
 public class DiscussPostServiceImpl implements DiscussPostService {
     @Autowired
     private DiscussPostDao discussPostDao;
+    @Autowired
+    private SensitiveWordsFilter filter;
     //获取用户信息注入
     @Autowired
     private UserDao userDao;
@@ -46,5 +55,38 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         }).collect(Collectors.toList());
         PageInfo<DiscussPost> pageInfo = new PageInfo<>(page, PageConstant.NAVIGATE_PAGES);
         return new MyPage(pageInfo,discussPostAndUsers);
+    }
+
+    @Override
+    public String sendDDiscussPost(int userId, String title, String content) {
+        if (StringUtils.isEmpty(title) || StringUtils.isEmpty(content)){
+            log.info("发帖出现参数异常");
+            return JSONUtils.getJSONString(1,"帖子的标题和内容不能为空");
+        }
+        //html标签处理
+        title = HtmlUtils.htmlEscape(title);
+        content = HtmlUtils.htmlEscape(content);
+        //敏感词处理
+        title = filter.filter(title);
+        content = filter.filter(content);
+        //帖子发送
+        DiscussPost discussPost = new DiscussPost();
+        discussPost.setUserId(userId);
+        discussPost.setContent(content);
+        discussPost.setCommentCount(0);
+        discussPost.setScore(0.0);
+        discussPost.setStatus(0);
+        discussPost.setTitle(title);
+        discussPost.setType(0);
+        discussPost.setCreateTime(new Date());
+        discussPostDao.saveDiscussPost(discussPost);
+        return JSONUtils.getJSONString(0,"发帖成功");
+    }
+
+    @Override
+    public DiscussPostAndUser getDiscussPostDetailById(int id) {
+        DiscussPost discussPost = discussPostDao.getDiscussPostById(id);
+        User user = userDao.getUserById(discussPost.getUserId());
+        return new DiscussPostAndUser(user,discussPost);
     }
 }

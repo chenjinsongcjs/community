@@ -13,4 +13,8 @@ import com.nowcoder.community.vo.MyPage;
 public interface DiscussPostService {
     //分页获取帖子
     MyPage getDiscussPostByPage(int pageNum, int pageSize);
+    //发布帖子
+    String sendDDiscussPost(int userId,String title,String content);
+    //获取帖子的详细信息
+    DiscussPostAndUser getDiscussPostDetailById(int id);
 }
