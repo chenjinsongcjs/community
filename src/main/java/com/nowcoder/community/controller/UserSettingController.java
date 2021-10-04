@@ -1,6 +1,7 @@
 package com.nowcoder.community.controller;
 
 import cn.hutool.core.util.IdUtil;
+import com.nowcoder.community.annotation.LoginCheck;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.interceptor.LoginInterceptor;
 import com.nowcoder.community.service.UserSettingService;
@@ -42,6 +43,14 @@ public class UserSettingController {
     private String domain;
     @Value("${server.servlet.context-path}")
     private String contextPath;
+
+    @GetMapping("/setting")
+    @LoginCheck
+    public String toSetting(){
+        return "/site/setting";
+    }
+
+
     /**
     * @Description: 文件上传一定为post请求
     * @Param: []
@@ -50,6 +59,7 @@ public class UserSettingController {
     * @Date: 2021/10/4
     */
     @PostMapping("/upload")
+    @LoginCheck //登录检查，没有登录不能进行文件上传
     public String upload(MultipartFile headerImage, Model model){
         //将上传的文件存放在本地
         if(headerImage.isEmpty()){
@@ -117,6 +127,7 @@ public class UserSettingController {
     }
 
     @PostMapping("/modifyPassword")
+    @LoginCheck
     public String modifyPassword(String oldPassword, String newPassword,
                                  Model model,
                                  RedirectAttributes attributes){
