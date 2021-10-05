@@ -1,5 +1,6 @@
 package com.nowcoder.community.service;
 
+import com.nowcoder.community.domain.Comment;
 import com.nowcoder.community.vo.CommentPage;
 
 /**
@@ -18,4 +19,12 @@ public interface CommentService {
     * @Date: 2021/10/5
     */
     CommentPage getAllCommentByPage(int entityId, int pageNum);
+    /**
+    * @Description: 保存前端传来的评论
+    * @Param: [comment]
+    * @return: [com.nowcoder.community.domain.Comment]
+    * @Author: 陈进松
+    * @Date: 2021/10/5
+    */
+    int saveComment(Comment comment);
 }

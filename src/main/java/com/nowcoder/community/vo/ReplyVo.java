@@ -3,7 +3,9 @@ package com.nowcoder.community.vo;
 import com.nowcoder.community.domain.Comment;
 import com.nowcoder.community.domain.User;
 import lombok.Data;
+import lombok.ToString;
 
+import java.lang.annotation.Target;
 import java.util.List;
 
 /**
@@ -14,9 +16,11 @@ import java.util.List;
  * @Description: 评论回复VO
   */
 @Data
+@ToString
 public class ReplyVo {
     private Comment reply;//评论的回复
     private User replyUser;//回复评论的用户
-    private List<ReplyReplyVo> replyReplyVos;
+    private User replyReplyUser;
+//    private List<ReplyReplyVo> replyReplyVos;
 
 }

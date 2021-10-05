@@ -58,7 +58,6 @@ public class DiscussPostController {
         CommentPage page = commentService.getAllCommentByPage(id, pageNum);
         model.addAttribute("page",page);
         model.addAttribute("requestPath","/discussPost/detail/"+id);
-        //TODO 回复被人的回复 还未实现，可能需要改变数据结构
         return "/site/discuss-detail";
     }
 

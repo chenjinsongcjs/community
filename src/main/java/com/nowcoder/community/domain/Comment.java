@@ -18,7 +18,7 @@ public class Comment {
     private int id;
     private int userId;
     private int entityType;//评论的类型
-    private int entityId;//被评论对象的id
+    private int entityId;//被评论对象的id ,是同一个评论不是每一个回复
     private int targetId;//被回复对象的id
     private String content;
     private int status;

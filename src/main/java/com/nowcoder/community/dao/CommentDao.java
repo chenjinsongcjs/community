@@ -1,7 +1,9 @@
 package com.nowcoder.community.dao;
 
 import com.nowcoder.community.domain.Comment;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -17,10 +19,17 @@ import java.util.List;
 public interface CommentDao {
     //查询帖子所有的评论数据，然后再业务层进行分页，统计数量就是list的size
     @Select({
-            "select id,user_id,entity_type,entity_id,target_id,content,status,create_time",
+            "select id,user_id,entity_type,entity_id,target_id,content,status,create_time ",
             "from `comment` ",
             "where status = 0 and entity_type = #{entityType} and entity_id = #{entityId} ",
             "order by create_time desc "
     })
     List<Comment> getAllComments(int entityType,int entityId);
+    //插入评论
+    @Insert({
+            "insert into `comment`(user_id,entity_type,entity_id,target_id,content,status,create_time) ",
+            "values(#{userId},#{entityType},#{entityId},#{targetId},#{content},#{status},#{createTime}) "
+    })
+    @Options(useGeneratedKeys = true,keyProperty = "id")
+    int saveComment(Comment comment);
 }

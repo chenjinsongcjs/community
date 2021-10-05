@@ -24,4 +24,6 @@ public interface DiscussPostDao {
 
     //根据id查询帖子用于显示帖子的详细信息
     DiscussPost getDiscussPostById(@Param("id") int id);
+    //更新帖子的评论数
+    int updateCommentCount(@Param("id") int id);
 }
