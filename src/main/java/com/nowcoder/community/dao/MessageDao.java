@@ -22,10 +22,13 @@ public interface MessageDao {
     //每个会话的总消息条数
     long getCountOfAllMessage(@Param("conversationId")String conversationId);
     //当前用户的所有未读消息数量
+    long getTotalUnreadMessage(@Param("userId") int userId);
 
     //分页查询当前会话的所有消息
     List<Message> getAllMessageThisConversation(@Param("conversationId") String conversationId);
     //设置消息的状态
-    int updateMessageStatus(@Param("id") int id,@Param("status") int status);
+    int updateMessageStatus(@Param("ids") List<Integer> ids,@Param("status") int status);
+    //保存私信
+    int saveMessage(Message message);
 
 }

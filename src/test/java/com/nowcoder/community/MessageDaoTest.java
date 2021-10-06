@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,5 +42,10 @@ public class MessageDaoTest {
         for (Message message : messages) {
             System.out.println(message);
         }
+    }
+    @Test
+    void testSaveMessage(){
+        Message message = new Message(null,111,112,"111_112","hello",0,new Date());
+        System.out.println(messageDao.saveMessage(message));
     }
 }

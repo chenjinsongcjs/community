@@ -5,8 +5,18 @@
     <sql id="selectFields">
         id,from_id,to_id,conversation_id,content,`status`,create_time
     </sql>
+    <sql id="insertFields">
+        from_id,to_id,conversation_id,content,`status`,create_time
+    </sql>
+    <insert id="saveMessage">
+        insert into `message`(<include refid="insertFields"></include>)
+        values (#{fromId},#{toId},#{conversationId},#{content},#{status},#{createTime})
+    </insert>
     <update id="updateMessageStatus">
-        update `message` set `status` = #{status} where id = #{id}
+        update `message` set `status` = #{status} where id in
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+        #{id}
+    </foreach>
     </update>
     <!--    查询列表并显示每一个会话的最后一条信息-->
     <select id="getAllMessagesThisUser" resultType="com.nowcoder.community.domain.Message">
@@ -38,5 +48,12 @@
         where conversation_id = #{conversationId}
         AND `status` != 2
         order by create_time desc
+    </select>
+    <select id="getTotalUnreadMessage" resultType="java.lang.Long">
+        SELECT count(*)
+        FROM `message`
+        WHERE from_id != 1
+        AND `status` = 0
+        AND (from_id = #{userId} OR to_id = #{userId})
     </select>
 </mapper>

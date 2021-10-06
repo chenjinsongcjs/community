@@ -1,5 +1,6 @@
 package com.nowcoder.community.service;
 
+import com.nowcoder.community.domain.Message;
 import com.nowcoder.community.vo.ConversationPageVo;
 import com.nowcoder.community.vo.MessagePageVO;
 
@@ -17,5 +18,7 @@ public interface MessageService {
     ConversationPageVo getAllConversationMsgByPage(String conversationId,int pageNum);
     //删除消息
     int deleteMessage(int id);
+    //发送私信功能实现
+    int sendMessage(String tiName ,String content);
 
 }
