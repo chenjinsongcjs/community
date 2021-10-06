@@ -14,4 +14,6 @@ public class PageConstant {
     public static final int PAGE_SIZE = 10;
     //评论的分页大小
     public static final int COMMENT_PAGE_SIZE = 5;
+    //私信列表的分页大小
+    public static final int MESSAGE_PAGE_SIZE = 5;
 }

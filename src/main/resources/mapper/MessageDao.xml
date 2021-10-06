@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nowcoder.community.dao.MessageDao">
+    <sql id="selectFields">
+        id,from_id,to_id,conversation_id,content,`status`,create_time
+    </sql>
+    <update id="updateMessageStatus">
+        update `message` set `status` = #{status} where id = #{id}
+    </update>
+    <!--    查询列表并显示每一个会话的最后一条信息-->
+    <select id="getAllMessagesThisUser" resultType="com.nowcoder.community.domain.Message">
+        select <include refid="selectFields"></include>
+        from `message`
+        where id in (
+            SELECT MAX(id)
+            FROM `message`
+            WHERE from_id != 1
+            AND `status` != 2
+            AND (from_id = #{userId} OR to_id = #{userId})
+            GROUP BY conversation_id
+        )
+        order by create_time desc
+    </select>
+    <select id="getCountOfUnread" resultType="java.lang.Long">
+        select count(*) from `message`
+        where `status` = 0
+        AND  conversation_id = #{conversationId}
+    </select>
+    <select id="getCountOfAllMessage" resultType="java.lang.Long">
+        select count(*) from `message`
+        where `status` != 2
+        AND  conversation_id = #{conversationId}
+    </select>
+    <select id="getAllMessageThisConversation" resultType="com.nowcoder.community.domain.Message">
+        select <include refid="selectFields"></include>
+        from `message`
+        where conversation_id = #{conversationId}
+        AND `status` != 2
+        order by create_time desc
+    </select>
+</mapper>
