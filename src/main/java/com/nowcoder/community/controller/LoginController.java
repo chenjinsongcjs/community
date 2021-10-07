@@ -7,6 +7,7 @@ import com.nowcoder.community.service.LoginService;
 import com.nowcoder.community.service.LogoutService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -39,6 +40,8 @@ public class LoginController {
     private LoginService loginService;
     @Autowired
     private LogoutService logoutService;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
     /**
     * @Description: 获取验证码
     * @Param: []

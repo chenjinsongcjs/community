@@ -4,6 +4,8 @@ import com.nowcoder.community.domain.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  *
@@ -27,4 +29,6 @@ public interface UserDao {
     User getUserByEmail(@Param("email") String email);
     //修改用户头像
     int updateUserHeaderImage(@Param("userId") int userId, @Param("imagePath") String imagePath);
+    //批量查询用户
+    List<User> getUserByIdBatch(@Param("ids") List<Integer> ids);
 }

@@ -12,7 +12,8 @@ import lombok.Getter;
 @Getter
 public enum CommentConstant {
     ENTITY_TYPE_DISCUSS_POST(1,"帖子的评论"),
-    ENTITY_TYPE_COMMENT(2,"评论的回复");
+    ENTITY_TYPE_COMMENT(2,"评论的回复"),
+    ENTITY_TYPE_USER(3,"用户实体类型");
     int code ;
     String msg;
 

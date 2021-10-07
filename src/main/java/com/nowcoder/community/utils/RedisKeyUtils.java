@@ -16,12 +16,35 @@ public class RedisKeyUtils {
     //like:user:userId ->number
     private static final String PREFIX_LIKE_USER = "like:user";
 
+    //关注与取消关注  可以关注人帖子或者话题等等
+    //被关注的对象实体
+    //followee:entityType:entityId -> zset(userId,now) //有序集合，score为时间，记录关注时间
+    private static final String PREFIX_FOLLOWEE = "followee";
+    //自己作为粉丝，关注了那些
+    //follower:userId:entityType -> zset(entityId,now);
+    private static final String PREFIX_FOLLOWER = "follower";
+    //redis存储验证码的前缀，
+    //kaptcha:UUID -> kaptcha //uuid唯一标识一个用户，用户验证码获取，因为此时用户还没有确定是谁
+    private static final String PREFIX_KAPTCHA = "kaptcha";
+
     public static String getLikeKey(int entityType, int entityId) {
         return PREFIX_LIKE + SEPARATOR + entityType + SEPARATOR + entityId;
     }
 
     public static String getLikeUserKey(int userId) {
         return PREFIX_LIKE_USER + SEPARATOR + userId;
+    }
+
+    public static String getFolloweeKey(int entityType, int entityId) {
+        return PREFIX_FOLLOWEE + SEPARATOR + entityType + SEPARATOR + entityId;
+    }
+
+    public static String getFollowerKey(int userId, int entityType) {
+        return PREFIX_FOLLOWER + SEPARATOR + userId + SEPARATOR + entityType;
+    }
+
+    private static String getKaptchaKey(String uuid){
+        return PREFIX_KAPTCHA+SEPARATOR+uuid;
     }
 
 }

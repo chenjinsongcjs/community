@@ -72,4 +72,12 @@
     <select id="getUserByEmail" resultType="com.nowcoder.community.domain.User">
         select <include refid="userCol"></include> from `user` where email = #{email}
     </select>
+    <select id="getUserByIdBatch" resultType="com.nowcoder.community.domain.User">
+        select <include refid="userCol"></include>
+        from `user`
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @SpringBootTest
 class UserTest {
@@ -39,6 +41,14 @@ class UserTest {
     @Test
     void testDeleteUserById(){
         System.out.println(userDao.deleteUserById(152));
+    }
+
+    @Test
+    void testBatch(){
+        List<User> users = userDao.getUserByIdBatch(Arrays.asList(111, 112, 157));
+        for (User user : users) {
+            System.out.println(user);
+        }
     }
 
 }

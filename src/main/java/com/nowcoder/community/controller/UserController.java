@@ -1,6 +1,8 @@
 package com.nowcoder.community.controller;
 
+import com.nowcoder.community.constant.CommentConstant;
 import com.nowcoder.community.domain.User;
+import com.nowcoder.community.service.FollowService;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import org.apache.ibatis.annotations.Param;
@@ -25,6 +27,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private LikeService likeService;
+    @Autowired
+    private FollowService followService;
 
     @GetMapping("/profile/{userId}")
     public String toProfile(@PathVariable("userId") int userId, Model model){
@@ -34,6 +38,15 @@ public class UserController {
         long likeCountOfUser = likeService.getAllLikeCountOfUser(userId);
         model.addAttribute("user",user);
         model.addAttribute("likeCount",likeCountOfUser);
+        //关注状态
+        boolean followStatus = followService.followStatus(CommentConstant.ENTITY_TYPE_USER.getCode(), userId);
+        model.addAttribute("followStatus",followStatus);
+        //关注数量
+        long followeeCount = followService.followeeCount(CommentConstant.ENTITY_TYPE_USER.getCode(),userId);
+        //粉丝数量
+        long followerCount = followService.followerCount(CommentConstant.ENTITY_TYPE_USER.getCode(),userId);
+        model.addAttribute("followeeCount",followeeCount);
+        model.addAttribute("followerCount",followerCount);
 
         return "/site/profile";
     }
