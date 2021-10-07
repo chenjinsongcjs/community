@@ -6,11 +6,11 @@ import com.github.pagehelper.PageInfo;
 import com.nowcoder.community.constant.CommentConstant;
 import com.nowcoder.community.constant.PageConstant;
 import com.nowcoder.community.dao.DiscussPostDao;
-import com.nowcoder.community.dao.UserDao;
 import com.nowcoder.community.domain.DiscussPost;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.service.DiscussPostService;
 import com.nowcoder.community.service.LikeService;
+import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.utils.JSONUtils;
 import com.nowcoder.community.utils.SensitiveWordsFilter;
 import com.nowcoder.community.vo.DiscussPostAndUser;
@@ -43,7 +43,7 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     private LikeService likeService;
     //获取用户信息注入
     @Autowired
-    private UserDao userDao;
+    private UserService userService;
     @Override
     public MyPage getDiscussPostByPage(int pageNum, int pageSize) {
         Page<DiscussPost> page = PageHelper.startPage(pageNum, pageSize);
@@ -51,7 +51,7 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         List<DiscussPostAndUser> discussPostAndUsers = discussPosts.stream().map((obj) -> {
             DiscussPostAndUser discussPostAndUser = new DiscussPostAndUser();
             if(obj.getUserId() != null){
-                User user = userDao.getUserById(obj.getUserId());
+                User user = userService.getUserById(obj.getUserId());
                 discussPostAndUser.setUser(user);
             }
             discussPostAndUser.setDiscussPost(obj);
@@ -94,7 +94,7 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     @Override
     public DiscussPostAndUser getDiscussPostDetailById(int id) {
         DiscussPost discussPost = discussPostDao.getDiscussPostById(id);
-        User user = userDao.getUserById(discussPost.getUserId());
+        User user = userService.getUserById(discussPost.getUserId());
         long likeCount = likeService.getLikeCount(CommentConstant.ENTITY_TYPE_DISCUSS_POST.getCode(), id);
         boolean likeStatus = likeService.likeStatus(CommentConstant.ENTITY_TYPE_DISCUSS_POST.getCode(), id);
         return new DiscussPostAndUser(user,discussPost, likeCount,likeStatus);

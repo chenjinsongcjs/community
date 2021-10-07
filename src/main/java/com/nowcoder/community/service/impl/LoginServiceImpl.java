@@ -2,14 +2,16 @@ package com.nowcoder.community.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.DigestUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.nowcoder.community.constant.ActivationConstant;
 import com.nowcoder.community.constant.TicketStatusConstant;
-import com.nowcoder.community.dao.LoginTicketDao;
-import com.nowcoder.community.dao.UserDao;
 import com.nowcoder.community.domain.LoginTicket;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.service.LoginService;
+import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.utils.RedisKeyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -27,9 +29,11 @@ import java.util.Map;
 @Service
 public class LoginServiceImpl implements LoginService {
     @Autowired
-    private UserDao userDao;
+    private UserService userService;
+//    @Autowired
+//    private LoginTicketDao loginTicketDao;
     @Autowired
-    private LoginTicketDao loginTicketDao;
+    private StringRedisTemplate redisTemplate;
 
     @Override
     public Map<String, String> login(User user, int expiredSecond) {
@@ -44,7 +48,7 @@ public class LoginServiceImpl implements LoginService {
             return map;
         }
         //检查用户是否存在或者激活
-        User user1 = userDao.getUserByName(user.getUsername());
+        User user1 = userService.getUserByName(user.getUsername());
         if (user1 == null){
             map.put("usernameMsg","用户不存在");
             return map;
@@ -65,7 +69,12 @@ public class LoginServiceImpl implements LoginService {
         LoginTicket loginTicket = new LoginTicket(null,user1.getId(),ticket,
                 TicketStatusConstant.TICKET_STATUS_EFFECTIVE.getCode(),
                 new Date(System.currentTimeMillis() + expiredSecond*1000));
-        loginTicketDao.saveLoginTicket(loginTicket);
+//        loginTicketDao.saveLoginTicket(loginTicket);
+        //将登录凭证保存在redis中，不用设置过期时间，方便登录的统计，
+        String loginTicketKey = RedisKeyUtils.getLoginTicketKey(ticket);
+        redisTemplate.opsForValue().set(loginTicketKey, JSONObject.toJSONString(loginTicket));
+
+
         //向上传递ticket交由cookie保存方便下次登录
         map.put("ticket",ticket);
         return map;

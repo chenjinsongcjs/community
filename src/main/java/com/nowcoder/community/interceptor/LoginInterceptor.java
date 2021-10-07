@@ -1,12 +1,16 @@
 package com.nowcoder.community.interceptor;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.nowcoder.community.constant.TicketStatusConstant;
 import com.nowcoder.community.dao.LoginTicketDao;
 import com.nowcoder.community.dao.UserDao;
 import com.nowcoder.community.domain.LoginTicket;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.utils.CookieUtils;
+import com.nowcoder.community.utils.RedisKeyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,8 +31,10 @@ import java.util.Date;
 public class LoginInterceptor implements HandlerInterceptor {
     @Autowired
     private CookieUtils cookieUtils;
+//    @Autowired
+//    private LoginTicketDao loginTicketDao;
     @Autowired
-    private LoginTicketDao loginTicketDao;
+    private StringRedisTemplate redisTemplate;
     @Autowired
     private UserDao userDao;
 
@@ -41,7 +47,11 @@ public class LoginInterceptor implements HandlerInterceptor {
         //获取用户的登录信息（从Cookie中）
         String ticket = cookieUtils.getCookieValue(request, "ticket");
         //根据ticket获取用户信息，不过之前要判断ticket的有效性
-        LoginTicket loginTicket = loginTicketDao.getLoginTicketByTicket(ticket);
+//        LoginTicket loginTicket = loginTicketDao.getLoginTicketByTicket(ticket);
+        String ticketKey = RedisKeyUtils.getLoginTicketKey(ticket);
+        String lt = redisTemplate.opsForValue().get(ticketKey);
+        LoginTicket loginTicket = JSONObject.parseObject(lt, new TypeReference<LoginTicket>() {
+        });
         if(loginTicket != null &&
                 loginTicket.getStatus() != TicketStatusConstant.TICKET_STATUS_INVALID.getCode() &&
         loginTicket.getExpired().after(new Date())){

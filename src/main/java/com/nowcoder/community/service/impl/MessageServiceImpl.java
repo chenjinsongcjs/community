@@ -6,11 +6,11 @@ import com.github.pagehelper.PageInfo;
 import com.nowcoder.community.constant.MessageStatus;
 import com.nowcoder.community.constant.PageConstant;
 import com.nowcoder.community.dao.MessageDao;
-import com.nowcoder.community.dao.UserDao;
 import com.nowcoder.community.domain.Message;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.interceptor.LoginInterceptor;
 import com.nowcoder.community.service.MessageService;
+import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.utils.SensitiveWordsFilter;
 import com.nowcoder.community.vo.ConversationPageVo;
 import com.nowcoder.community.vo.ConversationVO;
@@ -36,7 +36,7 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private MessageDao messageDao;
     @Autowired
-    private UserDao userDao;
+    private UserService userService;
     @Autowired
     private SensitiveWordsFilter filter;
 
@@ -51,7 +51,7 @@ public class MessageServiceImpl implements MessageService {
             conversationVO.setMessage(message);
             //发消息的对象
             int selectUserId = message.getFromId() == userId ? message.getToId() : message.getFromId();
-            User user = userDao.getUserById(selectUserId);
+            User user = userService.getUserById(selectUserId);
             conversationVO.setUser(user);//会话的另一个对象
             long countOfAllMessage = messageDao.getCountOfAllMessage(message.getConversationId());
             conversationVO.setCountOfMessage(countOfAllMessage);
@@ -75,7 +75,7 @@ public class MessageServiceImpl implements MessageService {
             //设置已读
             messageDao.updateMessageStatus(Arrays.asList(message.getId()),MessageStatus.MESSAGE_STATUS_READ.getCode());
             conversationVO.setMessage(message);
-            User user = userDao.getUserById(message.getFromId());
+            User user = userService.getUserById(message.getFromId());
             //设置消息发送者
             conversationVO.setUser(user);
             return conversationVO;
@@ -83,7 +83,7 @@ public class MessageServiceImpl implements MessageService {
         User user = LoginInterceptor.users.get();
         for (ConversationVO message : messages) {
             if (message.getUser().getId() != user.getId()) {
-                user = userDao.getUserById(message.getUser().getId());
+                user = userService.getUserById(message.getUser().getId());
                 break;
             }
         }
@@ -110,7 +110,7 @@ public class MessageServiceImpl implements MessageService {
         content = HtmlUtils.htmlEscape(content);
         content = filter.filter(content);
         message.setContent(content);
-        User toUser = userDao.getUserByName(toName);
+        User toUser = userService.getUserByName(toName);
         if(toUser == null)
             throw new RuntimeException("接收者账号不存在");
         message.setToId(toUser.getId());

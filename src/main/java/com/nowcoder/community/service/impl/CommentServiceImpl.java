@@ -7,15 +7,14 @@ import com.nowcoder.community.constant.CommentConstant;
 import com.nowcoder.community.constant.PageConstant;
 import com.nowcoder.community.dao.CommentDao;
 import com.nowcoder.community.dao.DiscussPostDao;
-import com.nowcoder.community.dao.UserDao;
 import com.nowcoder.community.domain.Comment;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.service.LikeService;
+import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.utils.SensitiveWordsFilter;
 import com.nowcoder.community.vo.CommentPage;
 import com.nowcoder.community.vo.CommentVO;
-import com.nowcoder.community.vo.ReplyReplyVo;
 import com.nowcoder.community.vo.ReplyVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private CommentDao commentDao;
     @Autowired
-    private UserDao userDao;
+    private UserService userService;
     @Autowired
     private SensitiveWordsFilter filter;
     @Autowired
@@ -58,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
         List<CommentVO> commentVOS = allComments.stream().map(comment -> {
             CommentVO commentVO = new CommentVO();
             //查询帖子评论用户
-            User user = userDao.getUserById(comment.getUserId());
+            User user = userService.getUserById(comment.getUserId());
             commentVO.setCommentUser(user);
             commentVO.setComment(comment);
             commentVO.setLikeCount(likeService.getLikeCount(CommentConstant.ENTITY_TYPE_COMMENT.getCode(),comment.getId()));
@@ -68,8 +67,8 @@ public class CommentServiceImpl implements CommentService {
             List<ReplyVo> replyVos = replies.stream().map(reply -> {
                 ReplyVo replyVo = new ReplyVo();
                 replyVo.setReply(reply);
-                User user1 = userDao.getUserById(reply.getUserId());
-                User user2 = userDao.getUserById(reply.getTargetId());
+                User user1 = userService.getUserById(reply.getUserId());
+                User user2 = userService.getUserById(reply.getTargetId());
 //                if(user2 == null){
 //                    replyVo.setReplyUser(user1);
 //                }else{

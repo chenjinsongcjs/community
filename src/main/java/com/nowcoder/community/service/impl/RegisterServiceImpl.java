@@ -4,13 +4,15 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.nowcoder.community.constant.ActivationConstant;
-import com.nowcoder.community.dao.UserDao;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.service.RegisterService;
+import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.utils.MailUtil;
+import com.nowcoder.community.utils.RedisKeyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -32,7 +34,10 @@ import java.util.Map;
 @Slf4j
 public class RegisterServiceImpl implements RegisterService {
     @Autowired
-    private UserDao userDao;
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private UserService userService;
     @Autowired
     private MailUtil mailUtil;
     @Autowired
@@ -57,13 +62,13 @@ public class RegisterServiceImpl implements RegisterService {
             return map;
         }
         //数据库查询数据，进行校验
-        User userInDB = userDao.getUserByName(user.getUsername());
+        User userInDB = userService.getUserByName(user.getUsername());
         //用户名和邮箱不能重复
         if(userInDB != null){
             map.put("usernameMsg","用户名已注册");
             return map;
         }
-        User email = userDao.getUserByEmail(user.getEmail());
+        User email = userService.getUserByEmail(user.getEmail());
         if(email != null){
             map.put("EmailMsg","该邮箱已注册");
             return map;
@@ -79,7 +84,7 @@ public class RegisterServiceImpl implements RegisterService {
         user.setSalt(salt);
         String passwd = DigestUtil.md5Hex(user.getPassword() + salt);
         user.setPassword(passwd);
-        userDao.saveUser(user);
+        userService.saveUser(user);
         //发邮件要求激活账号
         //拼接激活路径，在配置文件中定义方便修改
         //TODO 后期发送邮件可以放在队列中慢慢发
@@ -95,18 +100,26 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Override
     public int activation(int userId, String activationCode) {
-        User user = userDao.getUserById(userId);
+        User user = userService.getUserById(userId);
         String code = user.getActivationCode();
         if (!activationCode.equals(code)){
             return ActivationConstant.ACTIVATION_FAILURE;
         }else{
             if(user.getStatus() == ActivationConstant.ACTIVATION_STATUS_0){
                 user.setStatus(ActivationConstant.ACTIVATION_STATUS_1);
-                userDao.updateUser(user);
+
+                userService.updateUser(user);
+                //更新之后清空缓存
+                clearCache(userId);
                 return ActivationConstant.ACTIVATION_SUCCESS;
             }else{
                 return ActivationConstant.ACTIVATION_REPEAT;
             }
         }
+    }
+    //清除缓存中的数据
+    private   void clearCache(int userId){
+        String userKey = RedisKeyUtils.getUserKey(userId);
+        redisTemplate.delete(userKey);
     }
 }

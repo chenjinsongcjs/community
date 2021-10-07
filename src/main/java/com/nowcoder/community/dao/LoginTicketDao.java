@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.*;
  * @Description:
  */
 @Mapper
+@Deprecated
 public interface LoginTicketDao {
     //使用注解方式进行SQL注入，在SQL简单的时候可以使用
     @Insert({

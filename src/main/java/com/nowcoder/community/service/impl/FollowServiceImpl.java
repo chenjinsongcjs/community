@@ -6,9 +6,9 @@ import com.github.pagehelper.PageInfo;
 import com.nowcoder.community.constant.PageConstant;
 import com.nowcoder.community.dao.UserDao;
 import com.nowcoder.community.domain.User;
-import com.nowcoder.community.dto.FollowerDto;
 import com.nowcoder.community.interceptor.LoginInterceptor;
 import com.nowcoder.community.service.FollowService;
+import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.utils.RedisKeyUtils;
 import com.nowcoder.community.vo.FollowPageVo;
 import com.nowcoder.community.vo.FollowUserVo;
@@ -36,7 +36,7 @@ public class FollowServiceImpl implements FollowService {
     @Autowired
     private StringRedisTemplate redisTemplate;
     @Autowired
-    private UserDao userDao;
+    private UserService userService;
 
 
     @Override
@@ -90,7 +90,7 @@ public class FollowServiceImpl implements FollowService {
             List<Integer> ids = entityIds.stream().map(Integer::parseInt).collect(Collectors.toList());
             Page<User> userPage = PageHelper.startPage(pageNum, pageSize);
             if (ids.size() > 0){
-                List<User> users = userDao.getUserByIdBatch(ids);
+                List<User> users = userService.getUserByIdBatch(ids);
                 List<FollowUserVo> followUserVos = users.stream().map(user1 -> {
                     FollowUserVo followUserVo = new FollowUserVo();
                     followUserVo.setUser(user1);
@@ -119,7 +119,7 @@ public class FollowServiceImpl implements FollowService {
             List<Integer> ids = userIds.stream().map(Integer::parseInt).collect(Collectors.toList());
             Page<User> userPage = PageHelper.startPage(pageNum, pageSize);
             if(ids.size() > 0){
-                List<User> users = userDao.getUserByIdBatch(ids);
+                List<User> users = userService.getUserByIdBatch(ids);
                 List<FollowUserVo> followUserVos = users.stream().map(user1 -> {
                     FollowUserVo followUserVo = new FollowUserVo();
                     followUserVo.setUser(user1);

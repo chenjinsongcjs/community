@@ -4,9 +4,12 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.nowcoder.community.dao.UserDao;
 import com.nowcoder.community.domain.User;
+import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.service.UserSettingService;
+import com.nowcoder.community.utils.RedisKeyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -24,16 +27,19 @@ import java.util.Map;
 @Slf4j
 public class UserSettingServiceImpl implements UserSettingService {
     @Autowired
-    private UserDao userDao;
+    private UserService userService;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Override
     public int updateUserHeaderImage(int userId, String imagePath) {
-        return userDao.updateUserHeaderImage(userId,imagePath);
+        clearCache(userId);
+        return userService.updateUserHeaderImage(userId,imagePath);
     }
 
     @Override
     public Map<String, String> modifyPassword(int userId,String oldPasswd, String newPasswd) {
-        User user = userDao.getUserById(userId);
+        User user = userService.getUserById(userId);
         Map<String,String> map = new HashMap<>();
         if(StringUtils.isEmpty(oldPasswd)){
             map.put("passwordMsg","原始密码不能为空");
@@ -58,7 +64,14 @@ public class UserSettingServiceImpl implements UserSettingService {
         newPasswd = DigestUtil.md5Hex(newPasswd+salt);
         user.setPassword(newPasswd);
         user.setSalt(salt);
-        userDao.updateUser(user);
+        //情况Redis缓存
+        clearCache(userId);
+        userService.updateUser(user);
         return null;
+    }
+    //清除缓存中的数据
+    private   void clearCache(int userId){
+        String userKey = RedisKeyUtils.getUserKey(userId);
+        redisTemplate.delete(userKey);
     }
 }

@@ -26,6 +26,12 @@ public class RedisKeyUtils {
     //redis存储验证码的前缀，
     //kaptcha:UUID -> kaptcha //uuid唯一标识一个用户，用户验证码获取，因为此时用户还没有确定是谁
     private static final String PREFIX_KAPTCHA = "kaptcha";
+    //登录凭证的前缀 用户Cookie里没有userid
+    //login:ticket:ticket -> loginTicket
+    private static final String PREFIX_LOGIN_TICKET = "login:ticket";
+    //缓存user的前缀
+    //user:userId ->user
+    private static final String PREFIX_USER = "user";
 
     public static String getLikeKey(int entityType, int entityId) {
         return PREFIX_LIKE + SEPARATOR + entityType + SEPARATOR + entityId;
@@ -43,8 +49,15 @@ public class RedisKeyUtils {
         return PREFIX_FOLLOWER + SEPARATOR + userId + SEPARATOR + entityType;
     }
 
-    private static String getKaptchaKey(String uuid){
-        return PREFIX_KAPTCHA+SEPARATOR+uuid;
+    public static String getKaptchaKey(String uuid) {
+        return PREFIX_KAPTCHA + SEPARATOR + uuid;
     }
 
+    public static String getLoginTicketKey(String ticket) {
+        return PREFIX_LOGIN_TICKET  + SEPARATOR + ticket;
+    }
+
+    public static String getUserKey(int userId){
+        return PREFIX_USER+SEPARATOR+userId;
+    }
 }

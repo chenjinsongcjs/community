@@ -2,6 +2,8 @@ package com.nowcoder.community.service;
 
 import com.nowcoder.community.domain.User;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  *
@@ -12,4 +14,10 @@ import com.nowcoder.community.domain.User;
 public interface UserService {
 
     User getUserById(int id);
+    List<User> getUserByIdBatch(List<Integer> ids);
+    User getUserByName(String username);
+    User getUserByEmail(String email);
+    int saveUser(User user);
+    int updateUser(User user);
+    int updateUserHeaderImage(int userId,String path);
 }

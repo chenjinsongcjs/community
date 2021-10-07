@@ -1,10 +1,12 @@
 package com.nowcoder.community.controller;
 
+import cn.hutool.core.util.IdUtil;
 import com.google.code.kaptcha.Producer;
 import com.nowcoder.community.constant.LoginTicketExpiredTime;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.service.LoginService;
 import com.nowcoder.community.service.LogoutService;
+import com.nowcoder.community.utils.RedisKeyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -42,6 +45,7 @@ public class LoginController {
     private LogoutService logoutService;
     @Autowired
     private StringRedisTemplate redisTemplate;
+    String uuid;
     /**
     * @Description: 获取验证码
     * @Param: []
@@ -50,10 +54,16 @@ public class LoginController {
     * @Date: 2021/10/3
     */
     @GetMapping("/kaptcha.jpg")
-    public void getKaptchaCode(HttpServletResponse response, HttpSession session){
+    public void getKaptchaCode(HttpServletResponse response){
         String text = producer.createText();
         log.info("验证码：{}",text);
-        session.setAttribute("kaptchaCode",text);
+//        session.setAttribute("kaptchaCode",text);
+        //将验证码存储在Redis中
+        uuid = IdUtil.simpleUUID();
+        String kaptchaKey = RedisKeyUtils.getKaptchaKey(uuid);
+        //60s后过期
+        redisTemplate.opsForValue().set(kaptchaKey,text,60, TimeUnit.SECONDS);
+
         BufferedImage image = producer.createImage(text);
         try {
             ServletOutputStream outputStream = response.getOutputStream();
@@ -67,13 +77,14 @@ public class LoginController {
     @PostMapping("/login")
     public String login(User user, String kaptchaCode,
                         HttpServletResponse response,
-                        HttpSession session,
                         Model model,
                         boolean rememberMe){
         log.info("用户：{}",user);
         log.info("前端验证码：{}",kaptchaCode);
         //先校验验证码
-        String code = (String) session.getAttribute("kaptchaCode");
+//        String code = (String) session.getAttribute("kaptchaCode");
+        String kaptchaKey = RedisKeyUtils.getKaptchaKey(uuid);
+        String code = redisTemplate.opsForValue().get(kaptchaKey);
         if (StringUtils.isEmpty(code) ||
                 StringUtils.isEmpty(kaptchaCode) ||
                 !code.equalsIgnoreCase(kaptchaCode)){
