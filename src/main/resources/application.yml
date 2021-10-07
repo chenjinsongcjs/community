@@ -11,6 +11,7 @@ spring:
   redis:
     host: 8.141.60.249
     port: 6379
+    database: 0
   thymeleaf:
     cache: false # 关闭缓存，方便测试
   mail: # Spring Mail的相关配置

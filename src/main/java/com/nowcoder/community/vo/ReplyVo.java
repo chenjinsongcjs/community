@@ -21,6 +21,8 @@ public class ReplyVo {
     private Comment reply;//评论的回复
     private User replyUser;//回复评论的用户
     private User replyReplyUser;
+    private long likeCount;//评论回复的赞
+    private boolean likeStatus;
 //    private List<ReplyReplyVo> replyReplyVos;
 
 }

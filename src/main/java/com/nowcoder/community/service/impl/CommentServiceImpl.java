@@ -11,6 +11,7 @@ import com.nowcoder.community.dao.UserDao;
 import com.nowcoder.community.domain.Comment;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.service.CommentService;
+import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.utils.SensitiveWordsFilter;
 import com.nowcoder.community.vo.CommentPage;
 import com.nowcoder.community.vo.CommentVO;
@@ -45,6 +46,8 @@ public class CommentServiceImpl implements CommentService {
     private SensitiveWordsFilter filter;
     @Autowired
     private DiscussPostDao discussPostDao;
+    @Autowired
+    private LikeService likeService;
     @Override
     public CommentPage getAllCommentByPage(int entityId, int pageNum) {
         Page<Comment> comments = PageHelper.startPage(pageNum, PageConstant.COMMENT_PAGE_SIZE);
@@ -58,6 +61,8 @@ public class CommentServiceImpl implements CommentService {
             User user = userDao.getUserById(comment.getUserId());
             commentVO.setCommentUser(user);
             commentVO.setComment(comment);
+            commentVO.setLikeCount(likeService.getLikeCount(CommentConstant.ENTITY_TYPE_COMMENT.getCode(),comment.getId()));
+            commentVO.setLikeStatus(likeService.likeStatus(CommentConstant.ENTITY_TYPE_COMMENT.getCode(),comment.getId()));
             //所有的评论的回复
             List<Comment> replies = commentDao.getAllComments(CommentConstant.ENTITY_TYPE_COMMENT.getCode(), comment.getId());
             List<ReplyVo> replyVos = replies.stream().map(reply -> {
@@ -71,6 +76,8 @@ public class CommentServiceImpl implements CommentService {
 //                    replyVo.setReplyUser(user2);
 //                    replyVo.setReplyReplyUser(user1);
 //                }
+                replyVo.setLikeCount(likeService.getLikeCount(CommentConstant.ENTITY_TYPE_COMMENT.getCode(), reply.getId()));
+                replyVo.setLikeStatus(likeService.likeStatus(CommentConstant.ENTITY_TYPE_COMMENT.getCode(), reply.getId()));
                 replyVo.setReplyUser(user2);
                 replyVo.setReplyReplyUser(user1);
                 return replyVo;

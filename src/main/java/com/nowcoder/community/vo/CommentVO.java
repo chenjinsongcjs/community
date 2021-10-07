@@ -20,4 +20,6 @@ public class CommentVO {
     private Comment comment;//评论内容
     private User CommentUser;//评论用户
     private List<ReplyVo> replyVos;//该条评论的所有回复
+    private long likeCount;//评论的赞
+    private boolean likeStatus;
 }

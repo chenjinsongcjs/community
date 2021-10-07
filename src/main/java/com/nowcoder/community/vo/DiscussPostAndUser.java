@@ -19,4 +19,6 @@ import lombok.NoArgsConstructor;
 public class DiscussPostAndUser {
     private User user;
     private DiscussPost discussPost;
+    private long likeCount;
+    private boolean likeStatus;
 }
