@@ -61,6 +61,8 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public long getAllLikeCountOfUser(int userId) {
         String likeUserKey = RedisKeyUtils.getLikeUserKey(userId);
-        return Long.parseLong(redisTemplate.opsForValue().get(likeUserKey));
+        String count = redisTemplate.opsForValue().get(likeUserKey);
+        long likeCount = count == null ?0:Long.parseLong(count);
+        return likeCount;
     }
 }
