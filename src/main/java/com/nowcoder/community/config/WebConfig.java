@@ -2,6 +2,7 @@ package com.nowcoder.community.config;
 
 import com.nowcoder.community.interceptor.LoginCheckInterceptor;
 import com.nowcoder.community.interceptor.LoginInterceptor;
+import com.nowcoder.community.interceptor.MessageUnreadInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -21,6 +22,8 @@ public class WebConfig implements WebMvcConfigurer {
     private LoginInterceptor loginInterceptor;
     @Autowired
     private LoginCheckInterceptor loginCheckInterceptor;
+    @Autowired
+    private MessageUnreadInterceptor messageUnreadInterceptor;
 
     //针对只是页面跳转的页面直接使用viewController
     @Override
@@ -37,6 +40,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/**/*.js","/**/*.css","/**/*.png","/**/*.jpg","/**/*.jpeg");//静态资源放行
 
         registry.addInterceptor(loginCheckInterceptor)
+                .excludePathPatterns("/**/*.js","/**/*.css","/**/*.png","/**/*.jpg","/**/*.jpeg");//静态资源放行
+
+        registry.addInterceptor(messageUnreadInterceptor)
                 .excludePathPatterns("/**/*.js","/**/*.css","/**/*.png","/**/*.jpg","/**/*.jpeg");//静态资源放行
 
 

@@ -2,10 +2,14 @@ package com.nowcoder.community.controller;
 
 import com.github.pagehelper.Page;
 import com.nowcoder.community.constant.CommentConstant;
+import com.nowcoder.community.constant.EventConstant;
 import com.nowcoder.community.constant.PageConstant;
 import com.nowcoder.community.dao.UserDao;
+import com.nowcoder.community.domain.Event;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.dto.FollowerDto;
+import com.nowcoder.community.interceptor.LoginInterceptor;
+import com.nowcoder.community.kafka.KafKaProducer;
 import com.nowcoder.community.service.FollowService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.utils.JSONUtils;
@@ -33,6 +37,8 @@ public class FollowController {
     private FollowService followService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private KafKaProducer producer;
     @GetMapping("/followeeList/{userId}")
     public String getFolloweeList(@RequestParam(value = "pageNum" ,defaultValue = "1") int pageNum,
                                   Model model,
@@ -63,6 +69,15 @@ public class FollowController {
     @ResponseBody
     public String follow(int userId){
         followService.follow(CommentConstant.ENTITY_TYPE_USER.getCode(),userId);
+        //触发关注事件，发送系统消息
+        Event event = new Event().setTopic(EventConstant.event_follow)
+                .setEntityType(CommentConstant.ENTITY_TYPE_USER.getCode())
+                .setUserId(LoginInterceptor.users.get().getId())//触发事件的对象
+                .setEntityUserId(userId)
+                .setEntityId(userId);
+        producer.fireEvent(event);
+
+
         return JSONUtils.getJSONString(0);
     }
     @PostMapping("/unfollow")

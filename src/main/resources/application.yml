@@ -20,6 +20,12 @@ spring:
     host: smtp.qq.com # 发件服务器
     port: 465
     protocol: smtps
+  kafka:
+    bootstrap-servers: 8.141.60.249:9092
+    consumer:
+      auto-commit-interval: 3000
+      group-id: community-consumer-group
+      enable-auto-commit: true
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
   configuration:

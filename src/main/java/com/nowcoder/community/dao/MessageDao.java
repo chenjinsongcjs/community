@@ -30,5 +30,16 @@ public interface MessageDao {
     int updateMessageStatus(@Param("ids") List<Integer> ids,@Param("status") int status);
     //保存私信
     int saveMessage(Message message);
+    //处理系统通知的SQL
+    //查询最新的评论、点赞、关注信息
+    Message getLatestNotice(@Param("userId") int userId,@Param("topic") String topic);
+    //查询每个主题的未读数量
+    long getUnreadNoticeCount(@Param("userId") int userId,@Param("topic") String topic);
+    //查询每个主题下的所有消息数量
+    long getAllMessageNoticeCount(@Param("userId") int userId,@Param("topic") String topic);
+    //获取系统所有未读消息数量
+    long getAllUnreadNoticeCount(@Param("userId") int userId);
+    //获取每个主题所有的消息
+    List<Message> getAllNotice(@Param("userId") int userId,@Param("topic") String topic);
 
 }

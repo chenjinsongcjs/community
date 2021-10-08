@@ -56,4 +56,48 @@
         AND `status` = 0
         AND (from_id = #{userId} OR to_id = #{userId})
     </select>
+    <select id="getLatestNotice" resultType="com.nowcoder.community.domain.Message">
+        select <include refid="selectFields"></include>
+        from `message`
+        where id = (
+            select max(id)
+            from `message`
+            where from_id = 1
+            and to_id = #{userId}
+            and conversation_id = #{topic}
+            and `status` != 2
+        )
+    </select>
+    <select id="getUnreadNoticeCount" resultType="java.lang.Long">
+        select count(*)
+        from `message`
+        where from_id = 1
+        and to_id = #{userId}
+        and conversation_id = #{topic}
+        and `status` = 0
+    </select>
+    <select id="getAllMessageNoticeCount" resultType="java.lang.Long">
+        select count(*)
+        from `message`
+        where from_id = 1
+        and to_id = #{userId}
+        and conversation_id = #{topic}
+        and `status` != 2
+    </select>
+    <select id="getAllUnreadNoticeCount" resultType="java.lang.Long">
+        select count(*)
+        from `message`
+        where from_id = 1
+        and to_id = #{userId}
+        and `status` = 0
+    </select>
+    <select id="getAllNotice" resultType="com.nowcoder.community.domain.Message">
+        select <include refid="selectFields"></include>
+        from `message`
+        where from_id = 1
+        and to_id = #{userId}
+        and conversation_id = #{topic}
+        and `status` != 2
+        order by create_time desc
+    </select>
 </mapper>

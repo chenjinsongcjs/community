@@ -31,6 +31,8 @@ public class LogRecodeAop {
     public void before(JoinPoint joinPoint){
         //日志格式为：ip 时间 调用方法
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if(requestAttributes == null)
+            return;
         HttpServletRequest request = requestAttributes.getRequest();
         String remoteHost = request.getRemoteHost();
         String name = joinPoint.getSignature().getDeclaringTypeName()+"." + joinPoint.getSignature().getName();

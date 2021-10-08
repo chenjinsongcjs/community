@@ -85,7 +85,7 @@
 							<ul class="d-inline float-right">
 								<li class="d-inline ml-2">
 									<a href="javascript:;" class="text-primary"
-								th:onclick="|like(this,1,${detail.discussPost.id},${detail.user.id})|">
+								th:onclick="|like(this,1,${detail.discussPost.id},${detail.user.id},${detail.discussPost.id})|">
 									<b th:text="${detail.likeStatus?'已赞':'赞'}">赞</b> <i th:text="${detail.likeCount}">11</i>
 								</a>
 								</li>
@@ -136,7 +136,7 @@
 								<ul class="d-inline float-right">
 									<li class="d-inline ml-2">
 										<a href="javascript:;" class="text-primary"
-										   th:onclick="|like(this,2,${record.comment.id},${record.comment.userId})|">
+										   th:onclick="|like(this,2,${record.comment.id},${record.comment.userId},${detail.discussPost.id})|">
 											<b th:text="${record.likeStatus?'已赞':'赞'}">赞</b>(<i th:text="${record.likeCount}">1</i>)
 										</a>
 									</li>
@@ -160,7 +160,7 @@
 										<span  th:text="${#dates.format(reply.reply.createTime,'yyyy-MM-dd HH:mm:ss')}">2019-04-15 15:32:18</span>
 										<ul class="d-inline float-right">
 											<li class="d-inline ml-2"><a href="javascript:;" class="text-primary"
-											th:onclick="|like(this,2,${reply.reply.id},${reply.reply.userId})|">
+											th:onclick="|like(this,2,${reply.reply.id},${reply.reply.userId},${detail.discussPost.id})|">
 												<b th:text="${reply.likeStatus?'已赞':'赞'}">赞</b>(<i th:text="${reply.likeCount}">1</i>)</a></li>
 											<li class="d-inline ml-2">|</li>
 											<li class="d-inline ml-2"><a th:href="|#huifu-${n.index}|" data-toggle="collapse" class="text-primary">回复(<i>1</i>)</a></li>
@@ -173,6 +173,7 @@
 													<input type="hidden" name="entityId" th:value="${record.comment.id}">
 													<input type="hidden" name="targetId" th:value="${reply.replyReplyUser.id}">
 													<input type="hidden" name="discussPost" th:value="${detail.discussPost.id}">
+													<input type="hidden" name="entityUserId" th:value="${reply.replyReplyUser.id}">
 												</div>
 												<div class="text-right mt-2">
 													<button type="submit" class="btn btn-primary btn-sm" onclick="">&nbsp;&nbsp;回&nbsp;&nbsp;复&nbsp;&nbsp;</button>
@@ -189,6 +190,7 @@
 										<input type="hidden" name="entityType" value="2">
 										<input type="hidden" name="entityId" th:value="${record.comment.id}">
 										<input type="hidden" name="discussPost" th:value="${detail.discussPost.id}">
+										<input type="hidden" name="entityUserId" th:value="${record.commentUser.id}">
 									</div>
 									<div class="text-right mt-2">
 										<button type="submit" class="btn btn-primary btn-sm">&nbsp;&nbsp;回&nbsp;&nbsp;复&nbsp;&nbsp;</button>
@@ -224,6 +226,7 @@
 						<input type="hidden" name="entityType" value="1">
 						<input type="hidden" name="entityId" th:value="${detail.discussPost.id}">
 						<input type="hidden" name="discussPost" th:value="${detail.discussPost.id}">
+						<input type="hidden" name="entityUserId" th:value="${detail.user.id}">
 					</p>
 					<p class="text-right">
 						<button type="submit" class="btn btn-primary btn-sm">&nbsp;&nbsp;回&nbsp;&nbsp;帖&nbsp;&nbsp;</button>
@@ -300,9 +303,9 @@
 	<script th:src="@{/js/global.js}"></script>
 	<script th:src="@{/js/like.js}"></script>
 	<script type="application/javascript">
-		function like(btn, entityType, entityId, userId) {
+		function like(btn, entityType, entityId, userId,postId) {
 			$.post(CONTEXT_PATH+"/like",
-					{"entityType":entityType,"entityId":entityId,"entityUserId":userId},
+					{"entityType":entityType,"entityId":entityId,"entityUserId":userId,"postId":postId},
 					function (data) {
 						data = $.parseJSON(data);
 						var sta = data.likeStatus?"已赞":"赞"

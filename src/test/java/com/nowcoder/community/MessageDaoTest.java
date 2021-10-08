@@ -48,4 +48,27 @@ public class MessageDaoTest {
         Message message = new Message(null,111,112,"111_112","hello",0,new Date());
         System.out.println(messageDao.saveMessage(message));
     }
+    @Test
+    void testGetLatestNotice(){
+        System.out.println(messageDao.getLatestNotice(157, "follow"));
+    }
+    @Test
+    void testGetUnreadCount(){
+        System.out.println(messageDao.getUnreadNoticeCount(157, "like"));
+    }
+    @Test
+    void testGetAllMessageNoticeCount(){
+        System.out.println(messageDao.getAllMessageNoticeCount(11, "like"));
+    }
+    @Test
+    void testGetAllUnreadNoticeCount(){
+        System.out.println(messageDao.getAllUnreadNoticeCount(11));
+    }
+    @Test
+    void testGetAllNotice(){
+        List<Message> like = messageDao.getAllNotice(11, "like");
+        for (Message message : like) {
+            System.out.println(message);
+        }
+    }
 }
