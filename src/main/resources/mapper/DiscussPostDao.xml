@@ -15,6 +15,12 @@
     <update id="updateCommentCount">
         update `discuss_post` set comment_count = comment_count+1 where id = #{id}
     </update>
+    <update id="updateTypeOfPost">
+        update `discuss_post` set type = #{type} where id = #{id}
+    </update>
+    <update id="updateStatusOfPost">
+        update `discuss_post` set `status` = #{status} where id = #{id}
+    </update>
 
     <select id="getAllDiscussPosts" resultType="com.nowcoder.community.domain.DiscussPost">
         select * from `discuss_post`

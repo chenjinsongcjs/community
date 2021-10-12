@@ -3,9 +3,7 @@ package com.nowcoder.community.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.nowcoder.community.constant.CommentConstant;
-import com.nowcoder.community.constant.EventConstant;
-import com.nowcoder.community.constant.PageConstant;
+import com.nowcoder.community.constant.*;
 import com.nowcoder.community.dao.DiscussPostDao;
 import com.nowcoder.community.domain.DiscussPost;
 import com.nowcoder.community.domain.Event;
@@ -113,5 +111,20 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         long likeCount = likeService.getLikeCount(CommentConstant.ENTITY_TYPE_DISCUSS_POST.getCode(), id);
         boolean likeStatus = likeService.likeStatus(CommentConstant.ENTITY_TYPE_DISCUSS_POST.getCode(), id);
         return new DiscussPostAndUser(user,discussPost, likeCount,likeStatus);
+    }
+
+    @Override
+    public int topPost(int postId) {
+        return discussPostDao.updateTypeOfPost(postId, DiscussPostType.POST_TYPE_TOP.getCode());
+    }
+
+    @Override
+    public int wonderfulPost(int postId) {
+        return discussPostDao.updateStatusOfPost(postId,DiscussPostStatus.POST_STATUS_WONDERFUL.getCode()) ;
+    }
+
+    @Override
+    public int deletePost(int postId) {
+        return discussPostDao.updateStatusOfPost(postId,DiscussPostStatus.POST_STATUS_DELETE.getCode());
     }
 }

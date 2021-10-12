@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -68,9 +68,12 @@
 					<img src="http://static.nowcoder.com/images/img/icons/ico-discuss.png"/>
 					<span th:utext="${detail.discussPost.title}">备战春招，面试刷题跟他复习，一个月全搞定！</span>
 					<div class="float-right">
-						<button type="button" class="btn btn-danger btn-sm">置顶</button>
-						<button type="button" class="btn btn-danger btn-sm">加精</button>
-						<button type="button" class="btn btn-danger btn-sm">删除</button>
+						<button type="button" th:class="|btn btn-danger btn-sm ${detail.discussPost.type == 1?'disabled':''}|"
+						th:onclick="|topPost(this,${detail.discussPost.id})|" sec:authorize="hasAnyAuthority('MODERATOR')">置顶</button>
+						<button type="button" th:class="|btn btn-danger btn-sm ${detail.discussPost.status == 1?'disabled':''}|"
+						th:onclick="|updateStatus(this,${detail.discussPost.id},1)|" sec:authorize="hasAnyAuthority('MODERATOR')">加精</button>
+						<button type="button" th:class="|btn btn-danger btn-sm ${detail.discussPost.status == 2?'disabled':''}|"
+						th:onclick="|updateStatus(this,${detail.discussPost.id},2)|" sec:authorize="hasAnyAuthority('ADMIN')">删除</button>
 					</div>
 				</h6>
 				<!-- 作者 -->
@@ -301,18 +304,9 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 	<script th:src="@{/js/global.js}"></script>
-	<script th:src="@{/js/like.js}"></script>
+	<script th:src="@{/js/discuss.js}"></script>
 	<script type="application/javascript">
-		function like(btn, entityType, entityId, userId,postId) {
-			$.post(CONTEXT_PATH+"/like",
-					{"entityType":entityType,"entityId":entityId,"entityUserId":userId,"postId":postId},
-					function (data) {
-						data = $.parseJSON(data);
-						var sta = data.likeStatus?"已赞":"赞"
-						$(btn).children("b").text(sta);
-						$(btn).children("i").text(data.likeCount);
-					});
-		}
+
 	</script>
 </body>
 </html>

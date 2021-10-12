@@ -38,7 +38,7 @@ public class DiscussPost {
     @Field(type = FieldType.Integer)
     private Integer type;//0 普通 1 置顶
     @Field(type = FieldType.Integer)
-    private Integer status;//0 正常 1 精华
+    private Integer status;//0 正常 1 精华 2 删除
     //日期格式化
     @Field(type = FieldType.Date,format = DateFormat.custom,pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

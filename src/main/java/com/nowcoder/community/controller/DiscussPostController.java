@@ -1,6 +1,7 @@
 package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginCheck;
+import com.nowcoder.community.constant.DiscussPostStatus;
 import com.nowcoder.community.constant.PageConstant;
 import com.nowcoder.community.domain.DiscussPost;
 import com.nowcoder.community.domain.User;
@@ -61,6 +62,33 @@ public class DiscussPostController {
         model.addAttribute("page",page);
         model.addAttribute("requestPath","/discussPost/detail/"+id);
         return "/site/discuss-detail";
+    }
+    @PostMapping("/top")
+    @ResponseBody
+    public String topPost(int postId){
+        int topPost = discussPostService.topPost(postId);
+        if (topPost == 0)
+            return JSONUtils.getJSONString(1,"帖子置顶失败");
+        return JSONUtils.getJSONString(0,"帖子置顶成功");
+    }
+    @PostMapping("/update/{status}")
+    @ResponseBody
+    public String update(@PathVariable("status") int status, int postId){
+        if (status == DiscussPostStatus.POST_STATUS_WONDERFUL.getCode()){
+            int wonderfulPost = discussPostService.wonderfulPost(postId);
+            if (wonderfulPost == 0)
+                return JSONUtils.getJSONString(1,"帖子精华失败");
+            return JSONUtils.getJSONString(0,"帖子精华成功");
+        }else if (status == DiscussPostStatus.POST_STATUS_DELETE.getCode()){
+            int deletePost = discussPostService.deletePost(postId);
+            if (deletePost == 0)
+                return JSONUtils.getJSONString(1,"帖子删除失败");
+            return JSONUtils.getJSONString(0,"帖子删除成功");
+        }else{
+            return JSONUtils.getJSONString(1,"更新状态失败");
+        }
+
+
     }
 
 }

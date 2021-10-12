@@ -160,11 +160,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(//三个类型用户都有的权限
                         "/comment/reply",
-                        "/discussPost/**",
                         "/follow/**",
                         "/like",
                         "/message/**",
-                        "/user/**"
+                        "/user/setting",
+                        "/user/upload",
+                        "/user/modifyPassword",
+                        "/user/profile"
                 )
                 .hasAnyAuthority(
                         AuthConstant.AUTH_USER,
@@ -173,11 +175,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 )
                 .anyRequest()
                 .permitAll().and().csrf().disable();//关闭csrf防护
-        //记住我
-        http.rememberMe()
-                .tokenValiditySeconds(3600)//令牌有效时间
-                .tokenRepository(new InMemoryTokenRepositoryImpl())//令牌存储的策略
-                .userDetailsService(userService);//用户信息
+//        //记住我
+//        http.rememberMe()
+//                .tokenValiditySeconds(3600)//令牌有效时间
+//                .tokenRepository(new InMemoryTokenRepositoryImpl())//令牌存储的策略
+//                .userDetailsService(userService);//用户信息
 
 
         //权限不足时的处理

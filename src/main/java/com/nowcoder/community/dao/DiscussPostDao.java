@@ -26,4 +26,10 @@ public interface DiscussPostDao {
     DiscussPost getDiscussPostById(@Param("id") int id);
     //更新帖子的评论数
     int updateCommentCount(@Param("id") int id);
+    //实现置顶加精和删除功能
+    //置顶修改帖子的类型
+    int updateTypeOfPost(@Param("id") int id,@Param("type") int type);
+    //加精和删除功能修改帖子的状态
+    int updateStatusOfPost(@Param("id") int id,@Param("status") int status);
+
 }
