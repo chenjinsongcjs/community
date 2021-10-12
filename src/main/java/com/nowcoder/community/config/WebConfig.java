@@ -20,8 +20,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private LoginInterceptor loginInterceptor;
-    @Autowired
-    private LoginCheckInterceptor loginCheckInterceptor;
+//    @Autowired
+//    private LoginCheckInterceptor loginCheckInterceptor;
     @Autowired
     private MessageUnreadInterceptor messageUnreadInterceptor;
 
@@ -29,9 +29,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/toRegister").setViewName("site/register");
-        registry.addViewController("/toLogin").setViewName("site/login");
+//        registry.addViewController("/toLogin").setViewName("site/login");
 //        registry.addViewController("/user/setting").setViewName("/site/setting");
         registry.addViewController("/error").setViewName("error/500");
+        registry.addViewController("/denied").setViewName("/error/404");
     }
 
     @Override
@@ -39,8 +40,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginInterceptor)
                 .excludePathPatterns("/**/*.js","/**/*.css","/**/*.png","/**/*.jpg","/**/*.jpeg");//静态资源放行
 
-        registry.addInterceptor(loginCheckInterceptor)
-                .excludePathPatterns("/**/*.js","/**/*.css","/**/*.png","/**/*.jpg","/**/*.jpeg");//静态资源放行
+//        registry.addInterceptor(loginCheckInterceptor)
+//                .excludePathPatterns("/**/*.js","/**/*.css","/**/*.png","/**/*.jpg","/**/*.jpeg");//静态资源放行
 
         registry.addInterceptor(messageUnreadInterceptor)
                 .excludePathPatterns("/**/*.js","/**/*.css","/**/*.png","/**/*.jpg","/**/*.jpeg");//静态资源放行

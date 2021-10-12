@@ -61,7 +61,7 @@ public class RegisterException {
             PrintWriter writer = response.getWriter();
             writer.write(JSONUtils.getJSONString(1,"服务器发生异常"));
         }else{
-            response.sendRedirect(request.getContextPath()+"/error");
+            response.sendRedirect(request.getContextPath()+ "/error");
         }
     }
 }

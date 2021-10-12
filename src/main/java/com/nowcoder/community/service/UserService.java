@@ -1,6 +1,7 @@
 package com.nowcoder.community.service;
 
 import com.nowcoder.community.domain.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * @Date: 2021/10/07/8:23
  * @Description:
  */
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
     User getUserById(int id);
     List<User> getUserByIdBatch(List<Integer> ids);

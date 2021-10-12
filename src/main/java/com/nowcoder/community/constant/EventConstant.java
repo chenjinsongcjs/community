@@ -11,4 +11,5 @@ public class EventConstant {
     public static final String event_comment = "comment";
     public static final String event_like = "like";
     public static final String event_follow = "follow";
+    public static final String event_publish = "publish";
 }

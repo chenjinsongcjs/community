@@ -11,6 +11,9 @@ import com.nowcoder.community.utils.CookieUtils;
 import com.nowcoder.community.utils.RedisKeyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -57,6 +60,9 @@ public class LoginInterceptor implements HandlerInterceptor {
         loginTicket.getExpired().after(new Date())){
             User user = userDao.getUserById(loginTicket.getUserId());
             users.set(user);
+            //登录成功授权,跳过security验证，自己验证
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+            SecurityContextHolder.setContext(new SecurityContextImpl(token));
         }
         //true放行，false直接返回不执行目标方法，执行链结束
         return true;
@@ -65,7 +71,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         //将用户信息放在模板中，方便读取
-        if(modelAndView != null)
+        if(users != null && modelAndView != null)
             modelAndView.addObject("loginUser",users.get());
     }
     //在模板结束之后执行或者发生异常执行
@@ -73,5 +79,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         //模板结束之后清空ThreadLocal，避免内存溢出特别是线程池中，因为key为弱引用
         users.remove();
+        //退出要清除权限
+        SecurityContextHolder.clearContext();
     }
 }

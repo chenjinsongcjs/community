@@ -7,6 +7,7 @@ import com.nowcoder.community.domain.User;
 import com.nowcoder.community.interceptor.LoginInterceptor;
 import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.service.DiscussPostService;
+import com.nowcoder.community.service.ElasticSearchService;
 import com.nowcoder.community.utils.JSONUtils;
 import com.nowcoder.community.vo.CommentPage;
 import com.nowcoder.community.vo.DiscussPostAndUser;
@@ -30,7 +31,8 @@ public class DiscussPostController {
     @Autowired
     private CommentService commentService;
 
-    @GetMapping(value = {"/","/index"})
+
+    @RequestMapping(value = {"/","/index"},method = {RequestMethod.GET,RequestMethod.POST})
     public String showDiscussPosts(@RequestParam(value = "pageNum",defaultValue = "1") int pageNum,                                   Model model){
         MyPage myPage = discussPostService.getDiscussPostByPage(pageNum, PageConstant.PAGE_SIZE);
         model.addAttribute("page", myPage);

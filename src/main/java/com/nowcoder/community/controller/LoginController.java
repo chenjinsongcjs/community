@@ -10,12 +10,11 @@ import com.nowcoder.community.utils.RedisKeyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -59,7 +58,6 @@ public class LoginController {
         log.info("验证码：{}",text);
 //        session.setAttribute("kaptchaCode",text);
         //将验证码存储在Redis中
-        uuid = IdUtil.simpleUUID();
         String kaptchaKey = RedisKeyUtils.getKaptchaKey(uuid);
         //60s后过期
         redisTemplate.opsForValue().set(kaptchaKey,text,60, TimeUnit.SECONDS);
@@ -74,11 +72,23 @@ public class LoginController {
         }
     }
 
+    @RequestMapping(value = "/toLogin",method = {RequestMethod.GET})
+    public String toLogin(HttpServletResponse response){
+        uuid = IdUtil.simpleUUID();
+        Cookie cookie = new Cookie("uuid", uuid);
+        cookie.setPath("/community");
+        cookie.setMaxAge(60);
+        response.addCookie(cookie);
+        return "site/login";
+    }
+
+    //登录与登出交由Spring Security管理
+
     @PostMapping("/login")
     public String login(User user, String kaptchaCode,
                         HttpServletResponse response,
                         Model model,
-                        boolean rememberMe){
+                        boolean rememberMe,@CookieValue("uuid") String uuid){
         log.info("用户：{}",user);
         log.info("前端验证码：{}",kaptchaCode);
         //先校验验证码
@@ -114,6 +124,9 @@ public class LoginController {
     @GetMapping("/logout")
     public String logout(@CookieValue("ticket") String ticket){
         logoutService.logout(ticket);
+
+        //退出要清空权限
+        SecurityContextHolder.clearContext();
         return "redirect:/toLogin";
     }
 }

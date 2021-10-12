@@ -4,11 +4,15 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.nowcoder.community.constant.CommentConstant;
+import com.nowcoder.community.constant.EventConstant;
 import com.nowcoder.community.constant.PageConstant;
 import com.nowcoder.community.dao.DiscussPostDao;
 import com.nowcoder.community.domain.DiscussPost;
+import com.nowcoder.community.domain.Event;
 import com.nowcoder.community.domain.User;
+import com.nowcoder.community.kafka.KafKaProducer;
 import com.nowcoder.community.service.DiscussPostService;
+import com.nowcoder.community.service.ElasticSearchService;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.utils.JSONUtils;
@@ -44,6 +48,10 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     //获取用户信息注入
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private KafKaProducer producer;
+
     @Override
     public MyPage getDiscussPostByPage(int pageNum, int pageSize) {
         Page<DiscussPost> page = PageHelper.startPage(pageNum, pageSize);
@@ -62,6 +70,8 @@ public class DiscussPostServiceImpl implements DiscussPostService {
             return discussPostAndUser;
         }).collect(Collectors.toList());
         PageInfo<DiscussPost> pageInfo = new PageInfo<>(page, PageConstant.NAVIGATE_PAGES);
+
+
         return new MyPage(pageInfo,discussPostAndUsers);
     }
 
@@ -88,6 +98,11 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         discussPost.setType(0);
         discussPost.setCreateTime(new Date());
         discussPostDao.saveDiscussPost(discussPost);
+        //发帖添加到es中 ,异步添加
+        Event event = new Event().setTopic(EventConstant.event_publish)
+                .setData("postId", discussPost.getId());
+        producer.fireEvent(event);
+
         return JSONUtils.getJSONString(0,"发帖成功");
     }
 

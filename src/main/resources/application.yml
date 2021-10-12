@@ -26,6 +26,10 @@ spring:
       auto-commit-interval: 3000
       group-id: community-consumer-group
       enable-auto-commit: true
+  elasticsearch:
+    rest:
+      uris: http://127.0.0.1:9200 # es的地址
+      username: community_es # 集群的名字
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
   configuration:

@@ -20,7 +20,8 @@ import java.util.Arrays;
  * @Date: 2021/10/04/20:42
  * @Description: 登录检查拦截器
  */
-@Component
+//使用Spring Security代替
+//@Component
 @Slf4j
 public class LoginCheckInterceptor implements HandlerInterceptor {
 

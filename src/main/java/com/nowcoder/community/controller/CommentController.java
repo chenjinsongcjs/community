@@ -55,6 +55,10 @@ public class CommentController {
                 .setEntityUserId(entityUserId)
                 .setData("postId",discussPost);
         producer.fireEvent(event);
+        //评论时 ，异步地将帖子修改后放入es中
+        Event event1 = new Event().setTopic(EventConstant.event_publish)
+                .setData("postId", discussPost);
+        producer.fireEvent(event1);
         return "redirect:"+ request.getHeader("Referer");
     }
 }
