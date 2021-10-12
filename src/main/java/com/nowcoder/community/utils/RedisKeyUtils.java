@@ -32,6 +32,12 @@ public class RedisKeyUtils {
     //缓存user的前缀
     //user:userId ->user
     private static final String PREFIX_USER = "user";
+    //独立访客统计
+    //uv:yyyyMMdd -> ip
+    private static final String PREFIX_UV = "uv";
+    //日活跃用户统计
+    //dau:yyyyMMdd -> userId
+    private static final String PREFIX_DAU = "dau";
 
     public static String getLikeKey(int entityType, int entityId) {
         return PREFIX_LIKE + SEPARATOR + entityType + SEPARATOR + entityId;
@@ -54,10 +60,26 @@ public class RedisKeyUtils {
     }
 
     public static String getLoginTicketKey(String ticket) {
-        return PREFIX_LOGIN_TICKET  + SEPARATOR + ticket;
+        return PREFIX_LOGIN_TICKET + SEPARATOR + ticket;
     }
 
-    public static String getUserKey(int userId){
-        return PREFIX_USER+SEPARATOR+userId;
+    public static String getUserKey(int userId) {
+        return PREFIX_USER + SEPARATOR + userId;
+    }
+
+    public static String getUVKey(String date) {
+        return PREFIX_UV + SEPARATOR + date;
+    }
+
+    public static String getDAUKey(String date) {
+        return PREFIX_DAU + SEPARATOR + date;
+    }
+
+    public static String getUnionUVKey(String start, String end) {
+        return PREFIX_UV + SEPARATOR + start + SEPARATOR + end;
+    }
+
+    public static String getUnionDAUKey(String start, String end) {
+        return PREFIX_DAU + SEPARATOR + start + SEPARATOR + end;
     }
 }

@@ -172,6 +172,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         AuthConstant.AUTH_USER,
                         AuthConstant.AUTH_ADMIN,
                         AuthConstant.AUTH_MODERATOR
+                ).antMatchers(
+                        "/data/**"
+                )
+                .hasAnyAuthority(
+                        AuthConstant.AUTH_ADMIN
                 )
                 .anyRequest()
                 .permitAll().and().csrf().disable();//关闭csrf防护

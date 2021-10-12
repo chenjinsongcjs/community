@@ -3,10 +3,10 @@ package com.nowcoder.community.interceptor;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.nowcoder.community.constant.TicketStatusConstant;
-import com.nowcoder.community.dao.LoginTicketDao;
 import com.nowcoder.community.dao.UserDao;
 import com.nowcoder.community.domain.LoginTicket;
 import com.nowcoder.community.domain.User;
+import com.nowcoder.community.service.StatisticalService;
 import com.nowcoder.community.utils.CookieUtils;
 import com.nowcoder.community.utils.RedisKeyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +40,8 @@ public class LoginInterceptor implements HandlerInterceptor {
     private StringRedisTemplate redisTemplate;
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private StatisticalService statisticalService;
 
     //用ThreadLocal存储用户信息，使得线程之间隔离,在任何地方任何时候都能获取
     public static ThreadLocal<User> users = new ThreadLocal<>();
@@ -63,8 +65,12 @@ public class LoginInterceptor implements HandlerInterceptor {
             //登录成功授权,跳过security验证，自己验证
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
             SecurityContextHolder.setContext(new SecurityContextImpl(token));
+            //日活跃用户统计
+            statisticalService.addDAU(new Date(), user.getId());
         }
         //true放行，false直接返回不执行目标方法，执行链结束
+        //访客统计
+        statisticalService.addUV(new Date(),request.getRemoteHost());
         return true;
     }
     //在目标方法之后执行 模板渲染之前执行
