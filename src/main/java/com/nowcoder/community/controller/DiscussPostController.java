@@ -34,10 +34,12 @@ public class DiscussPostController {
 
 
     @RequestMapping(value = {"/","/index"},method = {RequestMethod.GET,RequestMethod.POST})
-    public String showDiscussPosts(@RequestParam(value = "pageNum",defaultValue = "1") int pageNum,                                   Model model){
-        MyPage myPage = discussPostService.getDiscussPostByPage(pageNum, PageConstant.PAGE_SIZE);
+    public String showDiscussPosts(@RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
+                                   Model model,@RequestParam(value = "orderModel",defaultValue = "0") int orderModel){
+        MyPage myPage = discussPostService.getDiscussPostByPage(pageNum, PageConstant.PAGE_SIZE,orderModel);
         model.addAttribute("page", myPage);
         model.addAttribute("requestPath","/index");
+        model.addAttribute("orderModel",orderModel);
         return "index";
     }
     @PostMapping("/discussPost/add")

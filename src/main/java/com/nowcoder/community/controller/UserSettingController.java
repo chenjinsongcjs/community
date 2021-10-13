@@ -113,6 +113,7 @@ public class UserSettingController {
     * @Author: 陈进松
     * @Date: 2021/10/4
     */
+    @Deprecated
     @GetMapping("/header/{filename}")
     public void getHeader(@PathVariable("filename") String filename,
                           HttpServletResponse response){

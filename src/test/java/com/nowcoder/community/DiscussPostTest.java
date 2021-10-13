@@ -23,7 +23,7 @@ public class DiscussPostTest {
     @Test
     void testGetAllDiscussPosts(){
         PageHelper.startPage(0,10);
-        List<DiscussPost> allDiscussPosts = discussPostDao.getAllDiscussPosts();
+        List<DiscussPost> allDiscussPosts = discussPostDao.getAllDiscussPosts(0);
         for (DiscussPost post : allDiscussPosts) {
             System.out.println(post);
         }

@@ -57,7 +57,7 @@ public class ESTest {
     //批量插入数据
     @Test
     void testSaveAll(){
-        repository.saveAll(dao.getAllDiscussPosts());
+        repository.saveAll(dao.getAllDiscussPosts(0));
     }
     //修改数据
     @Test

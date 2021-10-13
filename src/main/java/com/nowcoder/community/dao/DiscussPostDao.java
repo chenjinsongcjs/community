@@ -16,7 +16,7 @@ import java.util.List;
 @Mapper
 public interface DiscussPostDao {
     //查询首页显示的的帖子
-    List<DiscussPost> getAllDiscussPosts();
+    List<DiscussPost> getAllDiscussPosts(@Param("orderModel") int orderModel);
     //查询帖子的数量
     int getDiscussPostCount();
     //插入帖子

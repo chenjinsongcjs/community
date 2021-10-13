@@ -1,5 +1,8 @@
 package com.nowcoder.community.service.impl;
 
+import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -10,7 +13,6 @@ import com.nowcoder.community.domain.Event;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.kafka.KafKaProducer;
 import com.nowcoder.community.service.DiscussPostService;
-import com.nowcoder.community.service.ElasticSearchService;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.utils.JSONUtils;
@@ -18,13 +20,17 @@ import com.nowcoder.community.utils.SensitiveWordsFilter;
 import com.nowcoder.community.vo.DiscussPostAndUser;
 import com.nowcoder.community.vo.MyPage;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.HtmlUtils;
 
+import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -49,11 +55,55 @@ public class DiscussPostServiceImpl implements DiscussPostService {
 
     @Autowired
     private KafKaProducer producer;
+    @Value("${caffeine.posts.max-size}")
+    private int maxSize;
+
+    @Value("${caffeine.posts.expire-seconds}")
+    private int expireSeconds;
+    private LoadingCache<String,Page<DiscussPost>> postCache;
+
+    //初始化缓存
+    @PostConstruct
+    public void init(){
+        postCache = Caffeine.newBuilder()
+                .maximumSize(maxSize)
+                .expireAfterWrite(expireSeconds, TimeUnit.SECONDS)
+                .build(new CacheLoader<String, Page<DiscussPost>>() {
+                    @Override
+                    public @Nullable Page<DiscussPost> load(String key) throws Exception {
+                        if (StringUtils.isEmpty(key)){
+                            throw new RuntimeException("参数不能为空");
+                        }
+                        String[] split = key.split(":");
+                        if  (split.length != 2){
+                            throw new RuntimeException("参数不正确");
+                        }
+                        int pageNum = Integer.parseInt(split[0]) ;
+                        int pageSize = Integer.parseInt(split[1]);
+                        //在这里可以做二级缓存
+                        log.info("从数据库中加载数据");
+                        Page<DiscussPost> page = PageHelper.startPage(pageNum, pageSize);
+                        discussPostDao.getAllDiscussPosts(1);
+                        return page;
+                    }
+                });
+    }
 
     @Override
-    public MyPage getDiscussPostByPage(int pageNum, int pageSize) {
-        Page<DiscussPost> page = PageHelper.startPage(pageNum, pageSize);
-        List<DiscussPost> discussPosts = discussPostDao.getAllDiscussPosts();
+    public MyPage getDiscussPostByPage(int pageNum, int pageSize,int orderModel) {
+        //在这里使用缓存
+        Page<DiscussPost> page;
+        if (orderModel == 1){
+            log.info("从缓存中加载数据");
+            page = postCache.get(pageNum + ":" + pageSize);
+        }else{
+            log.info("压力测试");
+            log.info("从数据库中加载数据");
+            page = PageHelper.startPage(pageNum, pageSize);
+            discussPostDao.getAllDiscussPosts(orderModel);
+        }
+
+        List<DiscussPost> discussPosts = page.getResult();
         List<DiscussPostAndUser> discussPostAndUsers = discussPosts.stream().map((obj) -> {
             DiscussPostAndUser discussPostAndUser = new DiscussPostAndUser();
             if(obj.getUserId() != null){
@@ -68,8 +118,6 @@ public class DiscussPostServiceImpl implements DiscussPostService {
             return discussPostAndUser;
         }).collect(Collectors.toList());
         PageInfo<DiscussPost> pageInfo = new PageInfo<>(page, PageConstant.NAVIGATE_PAGES);
-
-
         return new MyPage(pageInfo,discussPostAndUsers);
     }
 

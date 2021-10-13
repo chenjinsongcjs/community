@@ -21,8 +21,8 @@ import java.util.Date;
  * @Description:
  */
 @Slf4j
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class LogRecodeAop {
     @Pointcut("execution(* com.nowcoder.community.service.*.*(..))")
     public void pointCut(){

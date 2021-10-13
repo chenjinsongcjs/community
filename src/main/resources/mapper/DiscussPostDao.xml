@@ -28,7 +28,12 @@
     <select id="getAllDiscussPosts" resultType="com.nowcoder.community.domain.DiscussPost">
         select * from `discuss_post`
         where status != 2
-        order by `type` desc ,status desc , create_time desc
+        order by
+        `type` desc ,status desc ,
+                 <if test="orderModel != 0">
+                     score desc,
+                 </if>
+                 create_time desc
     </select>
     <select id="getDiscussPostCount" resultType="java.lang.Integer">
         select count(*) from `discuss_post`

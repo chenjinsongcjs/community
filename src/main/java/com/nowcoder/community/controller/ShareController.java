@@ -29,6 +29,13 @@ public class ShareController {
     private ShareService service;
     @Value("${community.wkhtmltoimage.storepath}")
     private String storePath;
+    /**
+    * @Description: 分享功能生成长截图，这个过程可以交给kafka消息队列进行异步处理，避免阻塞
+    * @Param: [imageUrl]
+    * @return: [java.lang.String]
+    * @Author: 陈进松
+    * @Date: 2021/10/14
+    */
     @GetMapping("/share")
     @ResponseBody
     public String share(String imageUrl){

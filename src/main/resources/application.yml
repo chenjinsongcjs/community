@@ -61,3 +61,8 @@ aliyun-oss:
   accessKeyId: LTAI5tLvBSSnApM3zFBZj29n
   accessKeySecret: kGCrgFUF9ozstH80tGr9sCpbWKSKCb
   net-upload-bucket: community-head
+
+caffeine:
+  posts:
+    max-size: 15 #缓存数量
+    expire-seconds: 3600 # 缓存过期时间
