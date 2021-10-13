@@ -9,7 +9,9 @@ import com.nowcoder.community.interceptor.LoginInterceptor;
 import com.nowcoder.community.kafka.KafKaProducer;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.utils.JSONUtils;
+import com.nowcoder.community.utils.RedisKeyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +31,8 @@ public class LikeController {
     private LikeService likeService;
     @Autowired
     private KafKaProducer producer;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
     @PostMapping("/like")
     @LoginCheck
     public String like(int entityType, int entityId, int entityUserId,int postId){
@@ -51,6 +55,9 @@ public class LikeController {
                     .setData("postId",postId);
             producer.fireEvent(event);
         }
+        //将评论帖子放入Redis中，方便热帖排行
+        String postRefreshKey = RedisKeyUtils.getPostRefreshKey();
+        redisTemplate.opsForSet().add(postRefreshKey,postId+"");
 
         return JSONUtils.getJSONString(0,null,map);
     }

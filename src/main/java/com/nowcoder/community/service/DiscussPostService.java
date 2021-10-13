@@ -1,5 +1,6 @@
 package com.nowcoder.community.service;
 
+import com.nowcoder.community.domain.DiscussPost;
 import com.nowcoder.community.vo.DiscussPostAndUser;
 import com.nowcoder.community.vo.MyPage;
 
@@ -24,4 +25,8 @@ public interface DiscussPostService {
     int wonderfulPost(int postId);
     //删除帖子
     int deletePost(int postId);
+    //根据id获取帖子
+    DiscussPost getDiscussPostById(int PostId);
+    //更新帖子分数
+    int updatePostScore(int postId,double score);
 }

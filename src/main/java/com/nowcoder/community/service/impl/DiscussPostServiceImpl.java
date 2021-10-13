@@ -127,4 +127,14 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     public int deletePost(int postId) {
         return discussPostDao.updateStatusOfPost(postId,DiscussPostStatus.POST_STATUS_DELETE.getCode());
     }
+
+    @Override
+    public DiscussPost getDiscussPostById(int postId) {
+        return discussPostDao.getDiscussPostById(postId);
+    }
+
+    @Override
+    public int updatePostScore(int postId, double score) {
+        return discussPostDao.updateScore(postId,score);
+    }
 }

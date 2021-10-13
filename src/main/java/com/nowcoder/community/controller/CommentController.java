@@ -9,8 +9,10 @@ import com.nowcoder.community.domain.User;
 import com.nowcoder.community.interceptor.LoginInterceptor;
 import com.nowcoder.community.kafka.KafKaProducer;
 import com.nowcoder.community.service.CommentService;
+import com.nowcoder.community.utils.RedisKeyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +35,8 @@ public class CommentController {
     private CommentService commentService;
     @Autowired
     private KafKaProducer producer;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @PostMapping("/reply")
     @LoginCheck
@@ -59,6 +63,12 @@ public class CommentController {
         Event event1 = new Event().setTopic(EventConstant.event_publish)
                 .setData("postId", discussPost);
         producer.fireEvent(event1);
+
+        //将评论帖子放入Redis中，方便热帖排行
+        String postRefreshKey = RedisKeyUtils.getPostRefreshKey();
+        redisTemplate.opsForSet().add(postRefreshKey,discussPost+"");
+
+
         return "redirect:"+ request.getHeader("Referer");
     }
 }

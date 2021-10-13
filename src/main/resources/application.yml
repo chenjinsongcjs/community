@@ -30,6 +30,21 @@ spring:
     rest:
       uris: http://127.0.0.1:9200 # es的地址
       username: community_es # 集群的名字
+  quartz:
+    job-store-type: jdbc
+    scheduler-name: communitySchedule
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            isClustered: true
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 5
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
   configuration:
@@ -38,3 +53,11 @@ community:
   path:
     domain: http://localhost:8888
     uploadPath: D:/log/upload/
+  wkhtmltoimage:
+    cmdpath: D:\SoftWare\wkhtmltopdf\bin\wkhtmltoimage.exe  # 命令地址
+    storepath: D:\log\image\ #图片存储地址
+aliyun-oss:
+  endpoint: oss-cn-beijing.aliyuncs.com
+  accessKeyId: LTAI5tLvBSSnApM3zFBZj29n
+  accessKeySecret: kGCrgFUF9ozstH80tGr9sCpbWKSKCb
+  net-upload-bucket: community-head

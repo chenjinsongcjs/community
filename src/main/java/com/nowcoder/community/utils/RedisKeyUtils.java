@@ -82,4 +82,8 @@ public class RedisKeyUtils {
     public static String getUnionDAUKey(String start, String end) {
         return PREFIX_DAU + SEPARATOR + start + SEPARATOR + end;
     }
+
+    public static String getPostRefreshKey(){
+        return "post:refresh";
+    }
 }

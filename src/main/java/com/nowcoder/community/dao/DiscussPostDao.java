@@ -32,4 +32,5 @@ public interface DiscussPostDao {
     //加精和删除功能修改帖子的状态
     int updateStatusOfPost(@Param("id") int id,@Param("status") int status);
 
+    int updateScore(@Param("postId") int postId, @Param("score") double score);
 }

@@ -1,6 +1,7 @@
 package com.nowcoder.community.controller;
 
 import cn.hutool.core.util.IdUtil;
+import com.nowcoder.community.aliyunOSS.LocalUpload;
 import com.nowcoder.community.annotation.LoginCheck;
 import com.nowcoder.community.domain.User;
 import com.nowcoder.community.interceptor.LoginInterceptor;
@@ -43,6 +44,9 @@ public class UserSettingController {
     private String domain;
     @Value("${server.servlet.context-path}")
     private String contextPath;
+    //使用阿里云上传
+    @Autowired
+    private LocalUpload localUpload ;
 
     @GetMapping("/setting")
     @LoginCheck
@@ -71,26 +75,36 @@ public class UserSettingController {
         //获取文件后缀
         String suffix = filename.substring(filename.lastIndexOf("."));
         filename = IdUtil.simpleUUID()+suffix;
-        //定义文件上传位置
+
         try {
-            headerImage.transferTo(new File(uploadPath+filename));
-            //修改用户的头像地址，必须为web地址
+            String accessPath = localUpload.upload(filename, headerImage.getInputStream());
             User user = LoginInterceptor.users.get();
-            if (user == null){
-                throw new RuntimeException("用户还未登录");
-            }
-            String imageUrl = domain + contextPath + "/user/header/"+filename;
-            int i = userSettingService.updateUserHeaderImage(user.getId(), imageUrl);
-            if(i == 0){
-                throw new RuntimeException("用户头像地址修改失败");
-            }
-            log.info("头像上传成功");
-            return "redirect:/index";//修改成功返回首页刷新
+            userSettingService.updateUserHeaderImage(user.getId(), accessPath);
+            log.info("文件上传成功");
         } catch (IOException e) {
-            log.info("文件上传失败,服务器异常:{}",e.getMessage());
-            throw new MultipartException("文件上传失败");
+            log.error("文件上传失败：{}",e.getMessage());
         }
 
+//        //定义文件上传位置
+//        try {
+//            headerImage.transferTo(new File(uploadPath+filename));
+//            //修改用户的头像地址，必须为web地址
+//            User user = LoginInterceptor.users.get();
+//            if (user == null){
+//                throw new RuntimeException("用户还未登录");
+//            }
+//            String imageUrl = domain + contextPath + "/user/header/"+filename;
+//            int i = userSettingService.updateUserHeaderImage(user.getId(), imageUrl);
+//            if(i == 0){
+//                throw new RuntimeException("用户头像地址修改失败");
+//            }
+//            log.info("头像上传成功");
+//            return "redirect:/index";//修改成功返回首页刷新
+//        } catch (IOException e) {
+//            log.info("文件上传失败,服务器异常:{}",e.getMessage());
+//            throw new MultipartException("文件上传失败");
+//        }
+        return "redirect:/index";
     }
     /**
     * @Description: 获取用户头像,读取用户的头像地址，将来可以用OSS对象存储

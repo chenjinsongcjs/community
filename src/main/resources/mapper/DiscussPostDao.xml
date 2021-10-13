@@ -21,6 +21,9 @@
     <update id="updateStatusOfPost">
         update `discuss_post` set `status` = #{status} where id = #{id}
     </update>
+    <update id="updateScore">
+        update `discuss_post` set `score` = #{score} where id = #{id}
+    </update>
 
     <select id="getAllDiscussPosts" resultType="com.nowcoder.community.domain.DiscussPost">
         select * from `discuss_post`
