@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
@@ -73,10 +74,10 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/toLogin",method = {RequestMethod.GET})
-    public String toLogin(HttpServletResponse response){
+    public String toLogin(HttpServletResponse response, HttpServletRequest request){
         uuid = IdUtil.simpleUUID();
         Cookie cookie = new Cookie("uuid", uuid);
-        cookie.setPath("/community");
+        cookie.setPath(request.getContextPath());
         cookie.setMaxAge(60);
         response.addCookie(cookie);
         return "site/login";
@@ -88,7 +89,8 @@ public class LoginController {
     public String login(User user, String kaptchaCode,
                         HttpServletResponse response,
                         Model model,
-                        boolean rememberMe,@CookieValue("uuid") String uuid){
+                        boolean rememberMe,@CookieValue("uuid") String uuid,
+                        HttpServletRequest request){
         log.info("用户：{}",user);
         log.info("前端验证码：{}",kaptchaCode);
         //先校验验证码
@@ -111,7 +113,7 @@ public class LoginController {
             //登录成功
             Cookie cookie = new Cookie("ticket",map.get("ticket"));
             cookie.setMaxAge(expired);
-            cookie.setPath("/community");
+            cookie.setPath(request.getContextPath());
             response.addCookie(cookie);
             return "redirect:/index";//重定向到首页
         }

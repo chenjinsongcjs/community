@@ -1,0 +1,68 @@
+server:
+  port: 8888
+  servlet:
+    context-path:
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/community?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: Root_123
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+  thymeleaf:
+    cache: true
+  mail: # Spring Mail的相关配置
+    password: slemhreoetvlffab
+    username: 1320959760@qq.com
+    host: smtp.qq.com # 发件服务器
+    port: 465
+    protocol: smtps
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092
+    consumer:
+      auto-commit-interval: 3000
+      group-id: community-consumer-group
+      enable-auto-commit: true
+  elasticsearch:
+    rest:
+      uris: http://127.0.0.1:9200 # es的地址
+      username: community_es # 集群的名字
+  quartz:
+    job-store-type: jdbc
+    scheduler-name: communitySchedule
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            isClustered: true
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 5
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+community:
+  path:
+    domain: http://localhost:8888
+    uploadPath: /tmp/upload
+  wkhtmltoimage:
+    cmdpath: /root/wkhtmltoimage.sh  # 命令地址
+    storepath: /tmp/image/ #图片存储地址
+aliyun-oss:
+  endpoint: oss-cn-beijing.aliyuncs.com
+  accessKeyId: xxxxxxxxxx
+  accessKeySecret: xxxxxxxxxx
+  net-upload-bucket: community-head
+
+caffeine:
+  posts:
+    max-size: 15 #缓存数量
+    expire-seconds: 3600 # 缓存过期时间
